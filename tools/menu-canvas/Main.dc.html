@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pass the Papadam — Thanksgiving Menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700&amp;family=DM+Sans:wght@400;500;700&amp;family=Noto+Serif+Malayalam:wght@600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#173A2B}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes thumb{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(22deg)}}
+@keyframes wave{0%,100%{transform:rotate(-34deg)}50%{transform:rotate(26deg)}}
+@keyframes tilt{0%,100%{transform:rotate(-11deg)}50%{transform:rotate(11deg)}}
+@keyframes steam{0%{transform:translateY(4px);opacity:0}40%{opacity:.9}100%{transform:translateY(-20px);opacity:0}}
+@keyframes fall{0%{transform:translate(0,0) rotate(0deg);opacity:0}10%{opacity:1}85%{opacity:1}100%{transform:translate(28px,215px) rotate(360deg);opacity:0}}
+.bob{animation:bob 2s ease-in-out infinite}
+.thumb{transform-box:fill-box;transform-origin:50% 100%;animation:thumb 1s ease-in-out infinite}
+.wave{transform-box:fill-box;transform-origin:30% 100%;animation:wave 1s ease-in-out infinite}
+.tilt{transform-box:fill-box;transform-origin:50% 90%;animation:tilt 2s ease-in-out infinite}
+.steam{animation:steam 2s linear infinite}
+.leaf{transform-box:fill-box;transform-origin:center;animation:fall 2s linear infinite}
+@media (prefers-reduced-motion: reduce){.bob,.thumb,.wave,.tilt,.steam,.leaf{animation:none}}
+a{color:#F2B632}a:hover{color:#FFD36B}
+</style>
+</helmet>
+<div style="width: 800px; height: 1620px; box-sizing: border-box; padding: 40px 56px 48px; background: #173A2B; font-family: 'DM Sans', system-ui, sans-serif; color: #FFF4E2; display: flex; flex-direction: column; align-items: center; gap: 22px; overflow: hidden">
+<svg aria-hidden="true" viewBox="0 0 704 34" style="width: 688px; height: 34px; display: block">
+<path d="M0,6 Q176,30 352,8 Q528,30 704,6" fill="none" stroke="#E9D3BE" stroke-width="1.5" opacity="0.6"/>
+<g fill="#FFFFFF" stroke="#D8CBB5" stroke-width="1"><circle cx="66" cy="15" r="3"/><circle cx="154" cy="21" r="3"/></g><g fill="#E8891C"><circle cx="22" cy="10" r="7"/><circle cx="110" cy="19" r="7"/><circle cx="198" cy="22" r="7"/><circle cx="286" cy="16" r="7"/><circle cx="418" cy="16" r="7"/><circle cx="506" cy="22" r="7"/><circle cx="594" cy="19" r="7"/><circle cx="682" cy="10" r="7"/></g>
+<g fill="#FFFFFF" stroke="#C9B9A4" stroke-width="1"><circle cx="66" cy="15" r="5"/><circle cx="154" cy="21" r="5"/><circle cx="242" cy="20" r="5"/><circle cx="330" cy="11" r="5"/><circle cx="374" cy="11" r="5"/><circle cx="462" cy="20" r="5"/><circle cx="550" cy="21" r="5"/><circle cx="638" cy="15" r="5"/></g>
+<g fill="#3E6B48"><ellipse cx="352" cy="16" rx="4" ry="9"/><ellipse cx="44" cy="20" rx="3" ry="6"/><ellipse cx="660" cy="20" rx="3" ry="6"/></g>
+</svg>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<div style="font-size: 14px; letter-spacing: 0.3em; font-weight: 700; color: {{accent}}">THE THOMAS FAMILY THANKSGIVING</div>
+<h1 style="margin: 0; font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 700; font-size: 92px; line-height: 0.95; color: #FFF4E2; letter-spacing: -0.01em">Pass the Papadam</h1>
+<div style="font-family: 'Fraunces', Georgia, serif; font-size: 20px; color: #E9D3BE">Turkey, all the classics, and a little taste of Kerala.</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
+<div style="font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: #173A2B; background: #F2B632; border-radius: 999px; padding: 8px 16px">THU · NOV 26</div><div style="font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: #173A2B; background: #F2B632; border-radius: 999px; padding: 8px 16px">DINNER AT 6:00 PM</div><div style="font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: #173A2B; background: #F2B632; border-radius: 999px; padding: 8px 16px">THE WHOLE FAMILY’S INVITED</div>
+</div>
+<div style="width: 800px; margin: 4px -56px; box-sizing: border-box; background: #FFF7EA; padding: 26px 0 0; display: flex; justify-content: center; overflow: hidden; border-top: 6px solid #F2B632; border-bottom: 6px solid #F2B632">
+<svg role="img" aria-label="Animated cartoon of the family around the Thanksgiving table: Rocky the cat, Gabriel waving a drumstick, Shajan, Emma, a steaming roast turkey, Abby, Evalyn and Ash the black shepherd in a sweater, giving thumbs-ups, with the extended family behind them" viewBox="0 0 760 212" width="800" height="223" style="width: 800px; height: 223px; display: block">
+<circle cx="380" cy="150" r="140" fill="#F6DDB0"/>
+<circle cx="380" cy="150" r="104" fill="#F2CC8C"/>
+<g transform="translate(64,56)"><g class="bob"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#D9A07A"/><circle cx="0" cy="0" r="18" fill="#D9A07A"/></g></g><g transform="translate(142,56)"><g class="bob" style="animation-delay: -0.22s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#C98E6A"/><circle cx="0" cy="0" r="18" fill="#C98E6A"/></g></g><g transform="translate(226,56)"><g class="bob" style="animation-delay: -0.44s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#E2B48F"/><circle cx="0" cy="0" r="18" fill="#E2B48F"/></g></g><g transform="translate(312,56)"><g class="bob" style="animation-delay: -0.66s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#CF9873"/><circle cx="0" cy="0" r="18" fill="#CF9873"/></g></g><g transform="translate(448,56)"><g class="bob" style="animation-delay: -0.88s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#DDAA84"/><circle cx="0" cy="0" r="18" fill="#DDAA84"/></g></g><g transform="translate(532,56)"><g class="bob" style="animation-delay: -1.10s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#C4875F"/><circle cx="0" cy="0" r="18" fill="#C4875F"/></g></g><g transform="translate(618,56)"><g class="bob" style="animation-delay: -1.32s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#E0B08B"/><circle cx="0" cy="0" r="18" fill="#E0B08B"/></g></g><g transform="translate(700,56)"><g class="bob" style="animation-delay: -1.54s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#D49C76"/><circle cx="0" cy="0" r="18" fill="#D49C76"/></g></g><g transform="translate(380,38)"><g class="bob" style="animation-delay: -1.76s"><path d="M-30,62 Q-30,26 0,26 Q30,26 30,62 Z" fill="#C99068"/><circle cx="0" cy="0" r="18" fill="#C99068"/></g></g><g transform="translate(60,-12)"><g class="leaf"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#E8891C"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(170,-12)"><g class="leaf" style="animation-delay: -1.10s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#C0392B"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(250,-12)"><g class="leaf" style="animation-delay: -0.50s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#F2B632"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(345,-12)"><g class="leaf" style="animation-delay: -1.60s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#D35400"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(430,-12)"><g class="leaf" style="animation-delay: -0.20s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#C0392B"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(520,-12)"><g class="leaf" style="animation-delay: -1.30s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#F2B632"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(625,-12)"><g class="leaf" style="animation-delay: -0.70s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#E8891C"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(735,-12)"><g class="leaf" style="animation-delay: -1.80s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#D35400"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(110,-12)"><g class="leaf" style="animation-delay: -0.80s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#F2B632"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(560,-12)"><g class="leaf" style="animation-delay: -0.30s"><path d="M0,-9 Q8,-4 0,9 Q-8,-4 0,-9 Z" fill="#E8891C"/><path d="M0,-7 V8" stroke="#00000033" stroke-width="1"/></g></g><g transform="translate(30,140)"><g class="tilt" style="animation-delay: -0.90s">
+<path d="M-17,-8 L-13,-28 L-2,-15 Z M17,-8 L13,-28 L2,-15 Z" fill="#7C7C80"/>
+<circle cx="0" cy="0" r="19" fill="#8A8A8F"/>
+<path d="M-8.2,1.5 q3.0,-3.8 6.0,0 M2.2,1.5 q3.0,-3.8 6.0,0" fill="none" stroke="#1d1d1d" stroke-width="2.4" stroke-linecap="round"/><path d="M-3,6 L3,6 L0,9 Z" fill="#E9A0A8"/>
+<path d="M-9,8 L-22,6 M9,8 L22,6" stroke="#4a4a4a" stroke-width="1"/>
+</g></g><g transform="translate(100,124)"><g class="bob" style="animation-delay: -1.00s">
+<rect x="-24" y="16" width="48" height="32" rx="15" fill="#EFE6D6"/>
+<path d="M-20,26 l5,-5 5,5 5,-5 5,5 5,-5 5,5 5,-5 5,5" fill="none" stroke="#7A4E2D" stroke-width="2.5"/>
+<path d="M-20,35 l5,-5 5,5 5,-5 5,5 5,-5 5,5 5,-5 5,5" fill="none" stroke="#B5652B" stroke-width="2"/>
+<circle cx="-15" cy="-12" r="8" fill="#6B4A32"/><circle cx="-6" cy="-18" r="8" fill="#6B4A32"/><circle cx="5" cy="-18" r="8" fill="#6B4A32"/><circle cx="14" cy="-12" r="8" fill="#6B4A32"/><circle cx="18" cy="-3" r="6" fill="#6B4A32"/><circle cx="-18" cy="-3" r="6" fill="#6B4A32"/><circle cx="0" cy="-22" r="6" fill="#6B4A32"/>
+<circle cx="0" cy="0" r="19" fill="#D3A27F"/>
+<circle cx="-12" cy="-14" r="6" fill="#6B4A32"/><circle cx="-3" cy="-17" r="6" fill="#6B4A32"/><circle cx="7" cy="-16" r="6" fill="#6B4A32"/><circle cx="14" cy="-10" r="5" fill="#6B4A32"/>
+<path d="M-8.2,1.5 q3.0,-3.8 6.0,0 M2.2,1.5 q3.0,-3.8 6.0,0" fill="none" stroke="#2A1A14" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="0" cy="9" rx="4.5" ry="3.8" fill="#7A2A1E"/><circle cx="-13" cy="9" r="4" fill="#E58A6E" opacity="0.5"/><circle cx="13" cy="9" r="4" fill="#E58A6E" opacity="0.5"/>
+<g class="wave" style="animation-delay: -0.40s">
+<ellipse cx="36" cy="-14" rx="9" ry="12" fill="#9C5222"/>
+<ellipse cx="33" cy="-18" rx="3" ry="5" fill="#C27A3E"/>
+<rect x="34" y="-3" width="4.5" height="12" fill="#FFF7EA"/>
+<circle cx="33.5" cy="10" r="3" fill="#FFF7EA"/><circle cx="39" cy="10" r="3" fill="#FFF7EA"/>
+<circle cx="36" cy="15" r="6" fill="#D3A27F"/>
+</g></g></g><g transform="translate(184,100)"><g class="bob" style="animation-delay: -0.20s">
+<path d="M-38,72 Q-38,30 0,30 Q38,30 38,72 Z" fill="#7B8466"/>
+<path d="M-13,30 L0,60 L13,30 Z" fill="#BDBDB8"/>
+<path d="M0,36 V54" stroke="#8E8E8A" stroke-width="1.5"/>
+<circle cx="0" cy="40" r="1.6" fill="#8E8E8A"/><circle cx="0" cy="47" r="1.6" fill="#8E8E8A"/>
+<g class="tilt" style="animation-delay: -0.20s">
+<circle cx="-29" cy="2" r="6" fill="#A06A47"/><circle cx="29" cy="2" r="6" fill="#A06A47"/>
+<circle cx="0" cy="0" r="29" fill="#A06A47"/>
+<path d="M-14,-22 Q-6,-27 2,-25" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.35" stroke-linecap="round"/>
+<path d="M-27,4 Q-27,36 0,38 Q27,36 27,4 Q22,12 14,10 Q0,8 -14,10 Q-22,12 -27,4 Z" fill="#D8D3CB"/>
+<path d="M-12,10 Q0,4 12,10 Q6,14 0,12 Q-6,14 -12,10 Z" fill="#9A938A"/>
+<path d="M-8,18 Q0,25 8,18" fill="none" stroke="#5A3020" stroke-width="2.4" stroke-linecap="round"/>
+<g fill="#15151A"><rect x="-24" y="-8" width="20" height="13" rx="5"/><rect x="4" y="-8" width="20" height="13" rx="5"/></g><path d="M-4,-4 L4,-4" stroke="#15151A" stroke-width="2.5"/><path d="M-20,-5 L-15,-5 M8,-5 L13,-5" stroke="#FFFFFF" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+</g></g></g><g transform="translate(278,104)"><g class="bob" style="animation-delay: -0.60s">
+<path d="M-30,-6 Q-34,-34 0,-34 Q34,-34 30,-6 Q36,22 34,58 Q22,64 14,52 L-14,52 Q-22,64 -34,58 Q-36,22 -30,-6 Z" fill="#17100C"/>
+<path d="M-34,68 Q-34,28 0,28 Q34,28 34,68 Z" fill="#C8922E"/>
+<path d="M-11,28 L0,44 L11,28 Z" fill="#1E1E24"/>
+<path d="M-24,40 V66 M-17,36 V66 M17,36 V66 M24,40 V66" stroke="#A9781F" stroke-width="1.5"/>
+<circle cx="0" cy="0" r="25" fill="#9A6343"/>
+<path d="M-26,0 Q-26,-30 0,-28 Q24,-28 26,-2 Q14,-18 -4,-16 Q-18,-14 -26,0 Z" fill="#17100C"/>
+<path d="M-27,4 Q-31,18 -26,32 M27,4 Q31,18 26,32" fill="none" stroke="#17100C" stroke-width="6" stroke-linecap="round"/>
+<path d="M-9.9,1.8 q3.6,-4.5 7.2,0 M2.7,1.8 q3.6,-4.5 7.2,0" fill="none" stroke="#2A1A14" stroke-width="2.4" stroke-linecap="round"/><path d="M-8,9 Q0,20 8,9 Z" fill="#FFFFFF" stroke="#7A2A1E" stroke-width="2" stroke-linejoin="round"/><circle cx="-15" cy="9" r="4" fill="#E58A6E" opacity="0.5"/><circle cx="15" cy="9" r="4" fill="#E58A6E" opacity="0.5"/>
+</g></g><g class="thumb"><rect x="243" y="142" width="14" height="14" rx="4" fill="#C8922E"/><rect x="242" y="130" width="16" height="14" rx="6" fill="#9A6343"/><rect x="247" y="120" width="7" height="13" rx="3.5" fill="#9A6343"/><path d="M244,135 H256 M244,139 H256" stroke="#00000022" stroke-width="1"/></g><g transform="translate(380,0)"><g class="steam"><path d="M-12,100 q-5,-8 0,-16 q5,-8 0,-16" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/></g><g class="steam" style="animation-delay: -0.66s"><path d="M0,100 q-5,-8 0,-16 q5,-8 0,-16" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/></g><g class="steam" style="animation-delay: -1.32s"><path d="M12,100 q-5,-8 0,-16 q5,-8 0,-16" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/></g>
+<ellipse cx="0" cy="160" rx="64" ry="10" fill="#FFFFFF"/>
+<path d="M-44,158 A44,40 0 0 1 44,158 Z" fill="#B5652B"/>
+<path d="M-26,136 A30,22 0 0 1 10,120" fill="none" stroke="#D98E4F" stroke-width="6" stroke-linecap="round"/>
+<circle cx="-42" cy="148" r="11" fill="#9C5222"/><circle cx="42" cy="148" r="11" fill="#9C5222"/>
+<rect x="-58" y="140" width="10" height="5" rx="2.5" fill="#FFF7EA" transform="rotate(-30 -53 142)"/>
+<rect x="48" y="140" width="10" height="5" rx="2.5" fill="#FFF7EA" transform="rotate(30 53 142)"/>
+</g><g transform="translate(482,100)"><g class="bob" style="animation-delay: -1.20s">
+<circle cx="-30" cy="-20" r="12" fill="#C2935A"/><circle cx="-36" cy="-2" r="12" fill="#C2935A"/><circle cx="-36" cy="16" r="12" fill="#C2935A"/><circle cx="-32" cy="32" r="11" fill="#C2935A"/><circle cx="-22" cy="42" r="10" fill="#C2935A"/><circle cx="30" cy="-20" r="12" fill="#C2935A"/><circle cx="36" cy="-2" r="12" fill="#C2935A"/><circle cx="36" cy="16" r="12" fill="#C2935A"/><circle cx="32" cy="32" r="11" fill="#C2935A"/><circle cx="22" cy="42" r="10" fill="#C2935A"/><circle cx="-18" cy="-32" r="12" fill="#C2935A"/><circle cx="0" cy="-36" r="12" fill="#C2935A"/><circle cx="18" cy="-32" r="12" fill="#C2935A"/>
+<circle cx="-34" cy="8" r="5" fill="#DDB47A"/><circle cx="34" cy="8" r="5" fill="#DDB47A"/><circle cx="-28" cy="30" r="5" fill="#DDB47A"/><circle cx="28" cy="30" r="5" fill="#DDB47A"/><circle cx="-10" cy="-36" r="5" fill="#DDB47A"/><circle cx="12" cy="-34" r="5" fill="#DDB47A"/>
+<path d="M-38,72 Q-38,30 0,30 Q38,30 38,72 Z" fill="#1F2230"/>
+<path d="M-6,30 L0,52 L6,30" fill="none" stroke="#C9B48A" stroke-width="1.2"/>
+<path d="M0,52 l4,4 -4,4 -4,-4 Z" fill="#2A2A2A" stroke="#C9B48A" stroke-width="1"/>
+<path d="M18,32 L30,70" stroke="#A8642F" stroke-width="3"/>
+<g class="tilt" style="animation-delay: -1.20s">
+<circle cx="0" cy="0" r="27" fill="#F0CDB2"/>
+<circle cx="-22" cy="-16" r="9" fill="#C2935A"/><circle cx="-10" cy="-24" r="9" fill="#C2935A"/><circle cx="4" cy="-25" r="9" fill="#C2935A"/><circle cx="17" cy="-20" r="9" fill="#C2935A"/><circle cx="25" cy="-8" r="7" fill="#C2935A"/><circle cx="-25" cy="-6" r="7" fill="#C2935A"/>
+<circle cx="-14" cy="-22" r="4" fill="#DDB47A"/><circle cx="10" cy="-24" r="4" fill="#DDB47A"/><circle cx="22" cy="-14" r="4" fill="#DDB47A"/>
+<path d="M-11,11 Q0,26 11,11 Z" fill="#FFFFFF" stroke="#9A3B3B" stroke-width="2" stroke-linejoin="round"/>
+<path d="M-6,17 Q0,21 6,17" fill="#E58A80" opacity="0.7"/>
+<circle cx="-18" cy="9" r="4" fill="#E58A80" opacity="0.5"/><circle cx="18" cy="9" r="4" fill="#E58A80" opacity="0.5"/>
+<g fill="#1B1B22" stroke="#5E8F86" stroke-width="2"><path d="M-25,-6 Q-14,-11 -4,-6 Q-5,4 -14,5 Q-23,4 -25,-6 Z"/><path d="M4,-6 Q14,-11 25,-6 Q23,4 14,5 Q5,4 4,-6 Z"/></g><path d="M-4,-5 Q0,-8 4,-5" fill="none" stroke="#5E8F86" stroke-width="2"/>
+</g></g></g><g class="thumb" style="animation-delay: -0.50s"><rect x="449" y="138" width="14" height="14" rx="4" fill="#1F2230"/><rect x="448" y="126" width="16" height="14" rx="6" fill="#F0CDB2"/><rect x="453" y="116" width="7" height="13" rx="3.5" fill="#F0CDB2"/><path d="M450,131 H462 M450,135 H462" stroke="#00000022" stroke-width="1"/></g><g transform="translate(580,104)"><g class="bob" style="animation-delay: -1.60s">
+<circle cx="-26" cy="-24" r="11" fill="#16100C"/><circle cx="-34" cy="-8" r="11" fill="#16100C"/><circle cx="-36" cy="10" r="11" fill="#16100C"/><circle cx="-36" cy="28" r="11" fill="#16100C"/><circle cx="-30" cy="44" r="10" fill="#16100C"/><circle cx="-22" cy="56" r="9" fill="#16100C"/><circle cx="26" cy="-24" r="11" fill="#16100C"/><circle cx="34" cy="-8" r="11" fill="#16100C"/><circle cx="36" cy="10" r="11" fill="#16100C"/><circle cx="36" cy="28" r="11" fill="#16100C"/><circle cx="30" cy="44" r="10" fill="#16100C"/><circle cx="22" cy="56" r="9" fill="#16100C"/><circle cx="-12" cy="-34" r="11" fill="#16100C"/><circle cx="6" cy="-36" r="11" fill="#16100C"/><circle cx="20" cy="-32" r="10" fill="#16100C"/>
+<path d="M-34,68 Q-34,28 0,28 Q34,28 34,68 Z" fill="#1C1C22"/>
+<path d="M-32,44 H32 M-34,56 H34" stroke="#3A3A44" stroke-width="2"/>
+<path d="M-12,28 L0,42 L12,28 Z" fill="#A9C3E6"/>
+<circle cx="0" cy="0" r="25" fill="#A9714E"/>
+<circle cx="-20" cy="-16" r="8" fill="#16100C"/><circle cx="-8" cy="-24" r="8" fill="#16100C"/><circle cx="6" cy="-24" r="8" fill="#16100C"/><circle cx="18" cy="-18" r="8" fill="#16100C"/><circle cx="24" cy="-6" r="6" fill="#16100C"/><circle cx="-24" cy="-6" r="6" fill="#16100C"/>
+<circle cx="-25" cy="12" r="4" fill="none" stroke="#E2B84A" stroke-width="2"/>
+<circle cx="25" cy="12" r="4" fill="none" stroke="#E2B84A" stroke-width="2"/>
+<path d="M-9.9,1.8 q3.6,-4.5 7.2,0 M2.7,1.8 q3.6,-4.5 7.2,0" fill="none" stroke="#2A1A14" stroke-width="2.4" stroke-linecap="round"/><path d="M-6,10 q6,6 12,0" fill="none" stroke="#7A2A1E" stroke-width="2.2" stroke-linecap="round"/><circle cx="-15" cy="9" r="4" fill="#E58A6E" opacity="0.5"/><circle cx="15" cy="9" r="4" fill="#E58A6E" opacity="0.5"/>
+</g></g><g class="thumb" style="animation-delay: -1.00s"><rect x="605" y="142" width="14" height="14" rx="4" fill="#A9C3E6"/><rect x="604" y="130" width="16" height="14" rx="6" fill="#A9714E"/><rect x="609" y="120" width="7" height="13" rx="3.5" fill="#A9714E"/><path d="M606,135 H618 M606,139 H618" stroke="#00000022" stroke-width="1"/></g><g transform="translate(706,126)"><g class="tilt" style="animation-delay: -0.30s"><g transform="scale(0.74)"><g>
+<path d="M-42,62 Q-46,20 -22,12 H22 Q46,20 42,62 Z" fill="#F3E9D2"/>
+<path d="M-44,34 H44 V42 H-44 Z M-45,50 H45 V56 H-45 Z" fill="#1E6B47"/>
+<path d="M-44,44 H44 V48 H-44 Z" fill="#D4AF37"/>
+<path d="M-30,20 l-4,8 M-20,18 l-2,9 M20,18 l2,9 M30,20 l4,8" stroke="#D8CDB4" stroke-width="2" stroke-linecap="round"/>
+<path d="M-24,10 Q0,26 24,10 L22,20 Q0,34 -22,20 Z" fill="#D4AF37"/>
+<path d="M-18,14 v8 M-10,17 v9 M-2,18 v9 M6,18 v9 M14,16 v8" stroke="#B8962A" stroke-width="1.6"/>
+<path d="M-27,-14 Q-36,-34 -28,-44 Q-14,-36 -8,-26 Z" fill="#141414"/><path d="M-28,-44 Q-40,-42 -42,-30 Q-38,-26 -33,-33 Z" fill="#141414"/><path d="M-30,-40 Q-37,-38 -39,-32" fill="none" stroke="#2C2C2C" stroke-width="1.6"/>
+<path d="M27,-14 Q36,-34 28,-44 Q14,-36 8,-26 Z" fill="#141414"/><path d="M28,-44 Q40,-42 42,-30 Q38,-26 33,-33 Z" fill="#141414"/><path d="M30,-40 Q37,-38 39,-32" fill="none" stroke="#2C2C2C" stroke-width="1.6"/>
+<ellipse cx="0" cy="-8" rx="27" ry="25" fill="#171717"/>
+<path d="M-15,-2 Q-13,24 -9,32 Q0,38 9,32 Q13,24 15,-2 Z" fill="#1E1E1E"/>
+<path d="M-6,-20 Q0,-24 6,-20" fill="none" stroke="#2E2E2E" stroke-width="2" stroke-linecap="round"/>
+<circle cx="-11" cy="-8" r="4.2" fill="#6B3B1E"/><circle cx="11" cy="-8" r="4.2" fill="#6B3B1E"/>
+<circle cx="-11" cy="-8" r="2" fill="#0A0A0A"/><circle cx="11" cy="-8" r="2" fill="#0A0A0A"/>
+<circle cx="-9.8" cy="-9.4" r="1.2" fill="#FFF"/><circle cx="12.2" cy="-9.4" r="1.2" fill="#FFF"/>
+<path d="M-15,-14 Q-11,-17 -7,-14 M7,-14 Q11,-17 15,-14" fill="none" stroke="#3A3A3A" stroke-width="1.6" stroke-linecap="round"/>
+<ellipse cx="0" cy="27" rx="9.5" ry="7" fill="#050505"/><ellipse cx="-3" cy="24.5" rx="3.2" ry="1.6" fill="#FFF" opacity="0.35"/>
+<path d="M-17,34 Q0,54 17,34 Q0,42 -17,34 Z" fill="#0A0A0A"/>
+<path d="M-7,41 Q0,52 7,41 Q0,44 -7,41 Z" fill="#E9707E"/>
+<path d="M-12,37 l2,3 2,-3 M10,37 l2,3 2,-3" fill="#F5F0E6"/>
+<path d="M0,34 V38" stroke="#2A2A2A" stroke-width="1.4"/>
+</g></g></g></g>
+<rect x="0" y="160" width="760" height="52" rx="8" fill="#3E6B48"/>
+<rect x="0" y="160" width="760" height="5" fill="#C98A12"/>
+<g font-family="DM Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="700" letter-spacing="1.5" fill="#FFF7EA" text-anchor="middle"><text x="30" y="192">ROCKY</text><text x="100" y="192">GABRIEL</text><text x="184" y="192">SHAJAN</text><text x="278" y="192">EMMA</text><text x="482" y="192">ABBY</text><text x="580" y="192">EVALYN</text><text x="708" y="192">ASH</text></g>
+</svg>
+</div>
+<div style="width: 688px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; margin-top: 8px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px"><h2 style="margin: 0; font-family: 'DM Sans', sans-serif; font-size: 13px; letter-spacing: 0.24em; font-weight: 700; color: {{accent}}; display: flex; align-items: center; gap: 10px">FROM OUR KITCHEN<span style="flex: 1; height: 1px; background: #4F7A60"></span></h2><div style="font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 15px; color: #E9D3BE">We’ve got these covered</div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Herb-Roasted Turkey</div><div style="font-size: 14px; color: #E9D3BE">Golden, juicy &amp; the star of the table</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Homestyle Gravy</div><div style="font-size: 14px; color: #E9D3BE">Rich pan gravy from the drippings</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Chicken Kondattam <span style="font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #F2B632; border: 1px solid #F2B632; border-radius: 999px; padding: 1px 7px; vertical-align: 3px">KERALA</span></div><div style="font-size: 14px; color: #E9D3BE">Crispy chicken in a spicy, tangy chili-shallot masala</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Grammie’s Nut Loaf</div><div style="font-size: 14px; color: #E9D3BE">A savory, herb-packed vegetarian main</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Emma’s Mac &amp; Cheese</div><div style="font-size: 14px; color: #E9D3BE">Baked, bubbly &amp; extra cheesy</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Green Bean Casserole</div><div style="font-size: 14px; color: #E9D3BE">Creamy, with crispy fried onions</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Corn Casserole</div><div style="font-size: 14px; color: #E9D3BE">Sweet, buttery &amp; spoonable</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Cranberry Sauce</div><div style="font-size: 14px; color: #E9D3BE">Sweet, tart &amp; made fresh</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><circle cx="10" cy="10" r="10" fill="#F2B632"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#173A2B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Herb Butter</div><div style="font-size: 14px; color: #E9D3BE">Whipped with fresh herbs, made for warm rolls</div></div></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px"><h2 style="margin: 0; font-family: 'DM Sans', sans-serif; font-size: 13px; letter-spacing: 0.24em; font-weight: 700; color: {{accent}}; display: flex; align-items: center; gap: 10px">BRING A DISH<span style="flex: 1; height: 1px; background: #4F7A60"></span></h2><div style="font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 15px; color: #E9D3BE">Reply to claim one so we don’t get five pies</div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Appetizers</div><div style="font-size: 14px; color: #E9D3BE">Something to nibble on before dinner</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Pappadam <span style="font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #F2B632; border: 1px solid #F2B632; border-radius: 999px; padding: 1px 7px; vertical-align: 3px">KERALA</span></div><div style="font-size: 14px; color: #E9D3BE">Crisp, crackly &amp; meant for passing</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Chicken Curry &amp; Appam <span style="font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #F2B632; border: 1px solid #F2B632; border-radius: 999px; padding: 1px 7px; vertical-align: 3px">KERALA</span></div><div style="font-size: 14px; color: #E9D3BE">Kerala curry with lacy rice hoppers</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Mashed Potatoes</div><div style="font-size: 14px; color: #E9D3BE">Buttery &amp; creamy</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Stuffing / Dressing</div><div style="font-size: 14px; color: #E9D3BE">Cornbread, sage or a family recipe</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Sweet Potatoes</div><div style="font-size: 14px; color: #E9D3BE">Casserole, roasted or candied — your call</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Vegetable Side</div><div style="font-size: 14px; color: #E9D3BE">Salad, roasted veggies or a thoran</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Dinner Rolls</div><div style="font-size: 14px; color: #E9D3BE">Soft &amp; warm (the herb butter’s on us)</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Pumpkin Pie</div><div style="font-size: 14px; color: #E9D3BE">The classic</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Whipped Cream</div><div style="font-size: 14px; color: #E9D3BE">For topping the pies</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Dessert</div><div style="font-size: 14px; color: #E9D3BE">Cake, cookies, brownies, payasam — surprise us</div></div></div>
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" viewBox="0 0 20 20" style="width: 20px; height: 20px; flex: none; margin-top: 3px"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#F2B632" stroke-width="2" stroke-dasharray="4 3"/></svg><div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 500; color: #FFF4E2">Drinks</div><div style="font-size: 14px; color: #E9D3BE">Cider, soda, chaya or your favorite</div></div></div>
+</div>
+</div>
+<div style="margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<div style="font-family: 'Noto Serif Malayalam', serif; font-size: 30px; color: {{accent}}">നന്ദി</div>
+<div style="font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 19px; color: #FFF4E2">Come hungry. Bring the cousins. Pass the papadam.</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2B632","options":["#F2B632","#F08A3C","#E9D3BE","#9CC27A"]},"$preview":{"width":800,"height":1620}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#F2B632' };
+}
+}
+</script>
+</body>
+</html>
