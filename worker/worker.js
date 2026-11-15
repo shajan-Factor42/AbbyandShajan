@@ -95,11 +95,55 @@ async function unlockAnswer(request, env) {
 }
 
 // ---- Family calendar (only after unlock; needs the FAMILY_ICAL secret) ----
-const TRAVEL_WORDS = /\b(flight|fly|flying|trip|travel|vacation|hotel|airbnb|airport|delta|jetblue|united|american airlines|southwest|avios|out of town|away)\b/i;
-function icsDate(v) {
+// Left out on purpose: travel (an empty-house signal), money (paydays, bills), and anything marked private.
+const SKIP_WORDS = /\b(flight|fly|flying|trip|travel|vacation|hotel|airbnb|airport|delta|jetblue|united|american airlines|southwest|avios|out of town|away|pay ?day|paycheck|salary|bill|rent|mortgage|bank)\b/i;
+const NY = "America/New_York";
+function nyWallToUtc(y, mo, d, h, mi) {
+  const wall = Date.UTC(y, mo - 1, d, h, mi);
+  const off = Date.parse(new Date(wall).toLocaleString("en-US", { timeZone: NY }) + " UTC") - wall;
+  return wall - off;
+}
+function parseIcsTime(v) {
+  // wall = the event's clock time stored as if it were UTC (so day/month math ignores daylight saving); toUtc converts it back.
   const m = String(v).match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
   if (!m) return null;
-  return { y: +m[1], mo: +m[2], d: +m[3], h: m[4] ? +m[4] : null, mi: m[5] ? +m[5] : 0, utc: /Z$/.test(v) };
+  const allDay = !m[4], utc = /Z$/.test(v);
+  const wall = Date.UTC(+m[1], +m[2] - 1, +m[3], allDay ? 12 : +m[4], allDay ? 0 : +m[5]);
+  const toUtc = w => { if (allDay || utc) return w; const x = new Date(w); return nyWallToUtc(x.getUTCFullYear(), x.getUTCMonth() + 1, x.getUTCDate(), x.getUTCHours(), x.getUTCMinutes()); };
+  return { wall, allDay, toUtc, t: toUtc(wall) };
+}
+const DAY = 86400000, WEEKDAYS = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+function expand(start, rule, from, until) {
+  // Returns start times (ms) between from and until. Handles DAILY / WEEKLY (+BYDAY) / MONTHLY / YEARLY with INTERVAL, COUNT, UNTIL.
+  if (!rule) return start >= from && start <= until ? [start] : [];
+  const p = {}; rule.split(";").forEach(kv => { const [k, v] = kv.split("="); p[k] = v; });
+  const interval = Math.max(1, +(p.INTERVAL || 1)), count = p.COUNT ? +p.COUNT : Infinity;
+  const end = p.UNTIL ? Math.min(until, (parseIcsTime(p.UNTIL) || { wall: until }).wall + DAY) : until;
+  const out = []; let n = 0;
+  const s = new Date(start);
+  if (p.FREQ === "WEEKLY") {
+    const days = p.BYDAY ? p.BYDAY.split(",").map(d => WEEKDAYS[d.slice(-2)]).filter(d => d != null) : [s.getUTCDay()];
+    const weekStart = start - s.getUTCDay() * DAY;
+    for (let w = 0; w < 1500 && n < count; w += interval) {
+      for (const d of days.sort()) {
+        const t = weekStart + (w * 7 + d) * DAY;
+        if (t < start) continue;
+        if (t > end || n >= count) return out;
+        n++; if (t >= from) out.push(t);
+      }
+    }
+    return out;
+  }
+  for (let i = 0; i < 5000 && n < count; i += interval) {
+    let t;
+    if (p.FREQ === "DAILY") t = start + i * DAY;
+    else if (p.FREQ === "MONTHLY") { const x = new Date(start); x.setUTCMonth(x.getUTCMonth() + i); t = x.getTime(); }
+    else if (p.FREQ === "YEARLY") { const x = new Date(start); x.setUTCFullYear(x.getUTCFullYear() + i); t = x.getTime(); }
+    else return start >= from && start <= until ? [start] : [];
+    if (t > end) break;
+    n++; if (t >= from) out.push(t);
+  }
+  return out;
 }
 async function familyCalendar(env) {
   if (!env.FAMILY_ICAL) return "";
@@ -107,24 +151,30 @@ async function familyCalendar(env) {
     const res = await fetch(env.FAMILY_ICAL, { cf: { cacheTtl: 600 } });
     if (!res.ok) return "";
     const text = (await res.text()).replace(/\r?\n[ \t]/g, "");
-    const now = new Date(), until = new Date(now.getTime() + 45 * 86400000), out = [];
+    const now = Date.now(), from = now - DAY, until = now + 45 * DAY;
+    const events = [], overridden = new Set();
     for (const block of text.split("BEGIN:VEVENT").slice(1)) {
-      const get = k => { const m = block.match(new RegExp("^" + k + "[^:\\n]*:(.*)$", "m")); return m ? m[1].trim() : ""; };
-      const summary = get("SUMMARY").replace(/\\,/g, ",").replace(/\\n/g, " ");
-      if (!summary || TRAVEL_WORDS.test(summary) || /CLASS:(PRIVATE|CONFIDENTIAL)/.test(block)) continue;
-      const s = icsDate(get("DTSTART")); if (!s) continue;
-      const yearly = /FREQ=YEARLY/.test(get("RRULE"));
-      let when = new Date(Date.UTC(s.y, s.mo - 1, s.d, s.h == null ? 12 : s.h, s.mi));
-      if (s.h != null && !s.utc) { // local New York time -> UTC, handling daylight saving
-        const wall = when.getTime();
-        const off = Date.parse(new Date(wall).toLocaleString("en-US", { timeZone: "America/New_York" }) + " UTC") - wall;
-        when = new Date(wall - off);
+      const get = k => { const m = block.match(new RegExp("^" + k + "(?:;[^:\\n]*)?:(.*)$", "m")); return m ? m[1].trim() : ""; };
+      const uid = get("UID"), rid = get("RECURRENCE-ID");
+      if (rid) { const r = parseIcsTime(rid); if (r) overridden.add(uid + "|" + r.wall); }
+      events.push({ block, get, uid, rid });
+    }
+    const out = [];
+    for (const e of events) {
+      const summary = e.get("SUMMARY").replace(/\\,/g, ",").replace(/\;/g, ";").replace(/\\n/g, " ");
+      if (!summary || SKIP_WORDS.test(summary) || /CLASS:(PRIVATE|CONFIDENTIAL)/.test(e.block) || /STATUS:CANCELLED/.test(e.block)) continue;
+      const s = parseIcsTime(e.get("DTSTART")); if (!s) continue;
+      const ex = new Set((e.block.match(/^EXDATE[^:\n]*:(.*)$/gm) || []).flatMap(l => l.split(":")[1].split(",")).map(v => (parseIcsTime(v) || {}).wall));
+      const walls = e.rid ? [s.wall] : expand(s.wall, e.get("RRULE"), from - DAY, until + DAY);
+      for (const wall of walls) {
+        if (ex.has(wall) || (!e.rid && overridden.has(e.uid + "|" + wall))) continue;
+        const t = s.toUtc(wall);
+        if (t < from || t > until) continue;
+        const d = new Date(t);
+        const day = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: s.allDay ? "UTC" : NY });
+        const time = s.allDay ? "all day" : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: NY });
+        out.push({ t, line: day + ", " + time + ": " + summary.slice(0, 80) });
       }
-      if (yearly) { when.setUTCFullYear(now.getUTCFullYear()); if (when < now) when.setUTCFullYear(now.getUTCFullYear() + 1); }
-      if (when < new Date(now.getTime() - 86400000) || when > until) continue;
-      const day = when.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" });
-      const time = s.h == null ? "all day" : when.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" });
-      out.push({ t: when.getTime(), line: day + ", " + time + ": " + summary.slice(0, 80) });
     }
     out.sort((a, b) => a.t - b.t);
     return out.slice(0, 25).map(o => o.line).join("; ");
@@ -150,7 +200,7 @@ async function ask(request, env) {
     const cal = await familyCalendar(env);
     finalSystem += "\n\nVERIFIED FAMILY: this person solved the family riddle, so you may share these private details with them (and only these): " +
       (env.FAMILY_ADDRESS ? "Home address: " + env.FAMILY_ADDRESS + ". " : "") +
-      (cal ? "Family calendar, next few weeks (trips and travel are left out on purpose): " + cal + "." : "The family calendar isn't connected yet, so for schedules suggest texting Shajan or Abby.") +
+      (cal ? "Family calendar, next few weeks (trips, travel and money items are left out on purpose): " + cal + "." : (env.FAMILY_ICAL ? "Nothing shareable is on the family calendar in the next few weeks." : "The family calendar isn't connected yet, so for schedules suggest texting Shajan or Abby.")) +
       " Never share travel plans or when the house will be empty.";
   }
   try {
