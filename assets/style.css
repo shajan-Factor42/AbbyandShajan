@@ -1,7 +1,7 @@
 :root{
   --bg:#FAF7F2; --card:#FFFFFF; --line:#E4DED3;
-  --ink:#1C2541; --muted:#4A5370;
-  --blue:#3355D6; --blue-dark:#2440A8; --blue-soft:#E6ECFF; --blue-tint:#EEF2FF;
+  --ink:#141414; --muted:#4A4F48;
+  --blue:#1E6B47; --blue-dark:#0F4A30; --blue-soft:#E3F0E8; --blue-tint:#EEF5F0; --gold:#D4AF37;
   --serif:'DM Serif Display',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
@@ -90,3 +90,29 @@ a.card:hover{border-color:var(--blue);color:var(--ink)}
 .steam{animation:steam 2s linear infinite}
 .leaf{transform-box:fill-box;transform-origin:center;animation:fall 2s linear infinite}
 @media (prefers-reduced-motion: reduce){.bob,.thumb,.wave,.tilt,.steam,.leaf{animation:none}}
+
+/* thomas logo */
+.logo-hero{padding:36px 0 8px}
+.thomas-logo{display:block;width:100%;max-width:980px;height:auto;margin:0 auto}
+.brand .mark{background:var(--blue);color:var(--gold)}
+@keyframes lg-bob{0%,100%{transform:translateY(-2px)}50%{transform:translateY(-5px)}}
+@keyframes lg-swing{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}}
+@keyframes lg-wag{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+@keyframes lg-swish{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes lg-tilt{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes lg-peek{0%{transform:translateY(0)}12%{transform:translateY(14px)}25%{transform:translateY(0)}100%{transform:translateY(0)}}
+.lg-bob{animation:lg-bob 2s ease-in-out infinite}
+.lg-swing{transform-box:fill-box;transform-origin:50% 0;animation:lg-swing 2s ease-in-out infinite}
+.lg-wag{transform-box:fill-box;transform-origin:0% 100%;animation:lg-wag 1s ease-in-out infinite}
+.lg-swish{transform-box:fill-box;transform-origin:50% 0;animation:lg-swish 2s ease-in-out infinite}
+.lg-tilt{transform-box:fill-box;transform-origin:50% 100%;animation:lg-tilt 2s ease-in-out infinite}
+.lg-peek{animation:lg-peek 2s ease-in-out infinite}
+@keyframes lg-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes lg-blink{0%,49%{opacity:1}50%,100%{opacity:.25}}
+@keyframes lg-crumb{0%{transform:translateY(0);opacity:1}100%{transform:translateY(26px);opacity:0}}
+@keyframes lg-hover{0%,100%{transform:translate(0,0)}25%{transform:translate(3px,-4px)}50%{transform:translate(0,0)}75%{transform:translate(-3px,-4px)}}
+.lg-bounce{animation:lg-bounce 1s ease-in-out infinite}
+.lg-blink{animation:lg-blink 1s steps(1) infinite}
+.lg-crumb{animation:lg-crumb 2s linear infinite}
+.lg-hover{animation:lg-hover 2s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.lg-bob,.lg-swing,.lg-wag,.lg-swish,.lg-tilt,.lg-peek,.lg-bounce,.lg-blink,.lg-crumb,.lg-hover{animation:none}}
