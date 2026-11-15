@@ -178,7 +178,7 @@
         } else if (res.status === 429) {
           w.textContent = res.body.error;
         } else {
-          w.textContent = "Nice try. That's not it. Say \"I'm family\" for another riddle.";
+          w.textContent = "Nice try. That's not it. Say \"I'm family\" to try another riddle.";
         }
       }).catch(function () { w.className = "msg bot"; w.textContent = "Rocky can't hear you right now. Try again later."; });
     }
@@ -191,9 +191,8 @@
     toggle.addEventListener("click", function () { setOpen(panel.hidden); });
     wrap.querySelector(".chat-close").addEventListener("click", function () { setOpen(false); toggle.focus(); });
     add("bot", "Mrrow. I’m Rocky. Ask me about Thanksgiving, what’s still open to bring, family dates or the fundraiser. I’ll answer between naps.");
-    ["What time is dinner?", "What can I still bring?", "What’s on the menu?", "I’m family"].forEach(function (q) {
+    ["What time is dinner?", "What can I still bring?", "What’s on the menu?"].forEach(function (q) {
       var b = document.createElement("button"); b.type = "button"; b.textContent = q;
-      if (q === "I’m family") b.className = "fam-chip";
       b.addEventListener("click", function () { input.value = q; form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true })); });
       chips.appendChild(b);
     });
