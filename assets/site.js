@@ -174,13 +174,28 @@
           token = res.body.token;
           try { localStorage.setItem("thomasFamilyToken", JSON.stringify({ token: token, exp: Date.now() + (res.body.days || 30) * 86400000 })); } catch (e) {}
           markFamily();
-          w.textContent = "Purrrr. Welcome home, family. Now you can ask me about the address and the family calendar.";
+          w.textContent = "Purrrr. Welcome home, family. Now you can ask me for the address, what\u2019s on the family calendar, or to add something to it.";
         } else if (res.status === 429) {
           w.textContent = res.body.error;
         } else {
           w.textContent = "Nice try. That's not it. Say \"I'm family\" to try another riddle.";
         }
       }).catch(function () { w.className = "msg bot"; w.textContent = "Rocky can't hear you right now. Try again later."; });
+    }
+    function offerAdd(proposal) {
+      var row = document.createElement("div"); row.className = "chat-actions";
+      var yes = document.createElement("button"); yes.type = "button"; yes.className = "btn"; yes.textContent = "Add it";
+      var no = document.createElement("button"); no.type = "button"; no.className = "btn btn-ghost"; no.textContent = "Cancel";
+      row.appendChild(yes); row.appendChild(no); log.appendChild(row); log.scrollTop = log.scrollHeight;
+      no.addEventListener("click", function () { row.remove(); add("bot", "Fine. Back to my nap."); });
+      yes.addEventListener("click", function () {
+        yes.disabled = no.disabled = true;
+        var w = add("bot typing", "Batting it onto the calendar…");
+        post("/calendar/add", { token: token, proposal: proposal }).then(function (res) {
+          row.remove(); w.className = "msg bot";
+          w.textContent = res.body.ok ? "Done. " + res.body.summary + " is on the family calendar. It can take a little while to show up everywhere." : (res.body.error || "That didn't work. Please try again.");
+        }).catch(function () { row.remove(); w.className = "msg bot"; w.textContent = "Couldn't reach the calendar. Please try again."; });
+      });
     }
     markFamily();
     function add(role, text) {
@@ -209,6 +224,7 @@
         .then(function (j) {
           var a = j.answer || j.error || "Sorry, something went wrong.";
           wait.className = "msg bot"; wait.textContent = a;
+          if (j.proposal) offerAdd(j.proposal);
           if (j.answer) { history.push({ role: "user", content: q }, { role: "assistant", content: a }); history = history.slice(-6); }
         })
         .catch(function () { wait.className = "msg bot"; wait.textContent = "Rocky can’t hear you right now. Please try again, or text Shajan or Abby."; })
