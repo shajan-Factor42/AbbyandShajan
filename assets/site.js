@@ -42,4 +42,35 @@
     if (list) list.innerHTML = items.map(row).join("");
     if (soon) soon.innerHTML = items.slice(0, 3).map(row).join("");
   }
+
+  var fc = document.getElementById("fund-current");
+  if (fc && window.FUNDRAISER) {
+    var F = FUNDRAISER, money = function (n) { return "$" + Number(n).toLocaleString("en-US"); };
+    if (!F.charity) {
+      fc.innerHTML = '<div class="when">' + F.year + ' fundraiser</div><div class="what">We’re choosing this year’s cause</div>' +
+        '<p>The family is deciding right now. Check back soon to see who we’re raising money for and how to give.</p>';
+    } else {
+      var bar = "";
+      if (F.goal && F.raised) {
+        var pct = Math.min(100, Math.round(F.raised / F.goal * 100));
+        bar = '<div class="meter" role="img" aria-label="' + money(F.raised) + ' raised of ' + money(F.goal) + '"><span style="width:' + pct + '%"></span></div>' +
+          '<p class="meter-label"><strong>' + money(F.raised) + '</strong> raised of ' + money(F.goal) + ' goal</p>';
+      } else if (F.goal) {
+        bar = '<p class="meter-label">Goal: <strong>' + money(F.goal) + '</strong></p>';
+      }
+      var btns = '';
+      if (F.gofundme) btns += '<a class="btn" href="' + esc(F.gofundme) + '">Give on GoFundMe</a>';
+      if (F.charityLink) btns += '<a class="btn btn-ghost" href="' + esc(F.charityLink) + '">Give to the charity directly</a>';
+      fc.innerHTML = '<div class="when">' + F.year + ' fundraiser · ends ' + esc(F.deadline) + '</div><div class="what">' + esc(F.charity) + '</div>' +
+        (F.why ? '<p>' + esc(F.why) + '</p>' : '') + bar + (btns ? '<div class="btn-row">' + btns + '</div>' : '');
+    }
+  }
+  var fp = document.getElementById("fund-past");
+  if (fp && window.FUNDRAISER_PAST && FUNDRAISER_PAST.length) {
+    document.getElementById("fund-past-wrap").hidden = false;
+    fp.innerHTML = FUNDRAISER_PAST.slice().sort(function (a, b) { return b.year - a.year; }).map(function (p) {
+      return '<li class="event"><div class="date-chip"><span class="m">YEAR</span><span class="d" style="font-size:22px">' + p.year + '</span></div>' +
+        '<div><div class="t">' + esc(p.charity) + '</div>' + (p.raised ? '<div class="s">Raised $' + Number(p.raised).toLocaleString("en-US") + '</div>' : '') + '</div></li>';
+    }).join("");
+  }
 })();

@@ -41,3 +41,20 @@ window.EVENTS = [
   { title: "Abby’s Birthday", detail: "Yearly", month: 4, day: 27 },
   { title: "Abby & Shajan’s Anniversary", detail: "Yearly", month: 7, day: 1 }
 ];
+
+// Family fundraiser. Fill these in once the family picks this year's cause.
+// Leave "charity" empty to show "we're choosing" on the page.
+window.FUNDRAISER = {
+  year: 2026,
+  charity: "",            // e.g. "Children's Healthcare of Atlanta"
+  why: "",                // a sentence or two on why the family picked it
+  goal: 0,                // dollars, e.g. 2500 (0 hides the goal)
+  raised: 0,              // update by hand from GoFundMe (0 hides the progress bar)
+  deadline: "December 31, 2026",
+  gofundme: "",           // GoFundMe link
+  charityLink: ""         // the charity's own donation page
+};
+// Add a line here each year once a fundraiser wraps up.
+window.FUNDRAISER_PAST = [
+  // { year: 2025, charity: "Name", raised: 1800 },
+];

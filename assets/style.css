@@ -116,3 +116,15 @@ a.card:hover{border-color:var(--blue);color:var(--ink)}
 .lg-crumb{animation:lg-crumb 2s linear infinite}
 .lg-hover{animation:lg-hover 2s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){.lg-bob,.lg-swing,.lg-wag,.lg-swish,.lg-tilt,.lg-peek,.lg-bounce,.lg-blink,.lg-crumb,.lg-hover{animation:none}}
+
+/* fundraiser */
+.fund .what{font-size:34px}
+.fund p{margin-top:8px}
+.meter{height:14px;background:var(--blue-soft);border-radius:999px;overflow:hidden;margin-top:18px}
+.meter span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#2F8A5C);border-radius:999px}
+.meter-label{color:var(--ink) !important}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn-ghost{background:transparent;color:var(--blue);border:2px solid var(--blue)}
+.btn-ghost:hover{background:var(--blue-soft);color:var(--blue-dark)}
+.steps{margin:12px 0 0;padding-left:22px;display:grid;gap:12px;color:var(--muted)}
+.steps strong{color:var(--ink)}
