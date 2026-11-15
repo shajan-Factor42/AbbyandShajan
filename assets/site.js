@@ -127,6 +127,63 @@
     }).join("");
   }
 
+  // ---- wishlists ----
+  var wl = document.getElementById("wishlists");
+  if (wl && window.WISHLIST_PEOPLE) {
+    var lists = {}, myName = null, openItem = null, loaded = false;
+    function meTok() { try { var m = JSON.parse(localStorage.getItem("thomasFamilyMe") || "null"); return m && m.exp > Date.now() ? m.me : ""; } catch (e) { return ""; } }
+    function renderWish() {
+      wl.innerHTML = WISHLIST_PEOPLE.map(function (p) {
+        var items = lists[p.name] || [], mine = myName === p.name;
+        var body;
+        if (!loaded) body = '<p class="wish-empty">Loading…</p>';
+        else if (!items.length) body = '<p class="wish-empty">Nothing yet. ' + esc(p.name) + ' can ask Rocky to add something.</p>';
+        else body = '<ul class="dishes wish-items">' + items.map(function (it) {
+          var name = it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener noreferrer nofollow">' + esc(it.item) + '</a>' : esc(it.item);
+          if (mine) return '<li>' + BOX + '<div><div class="dish-name">' + name + '</div></div></li>';
+          if (it.claimedBy) return '<li>' + CHECK + '<div><div class="dish-name">' + name + '</div><span class="status taken">' + esc(it.claimedBy) + '’s getting this</span></div></li>';
+          if (openItem === it.id) return '<li>' + BOX + '<div style="flex:1"><div class="dish-name">' + name + '</div>' +
+            '<form class="claim-form" data-id="' + it.id + '"><label for="gift-name">Your name</label>' +
+            '<div class="claim-row"><input id="gift-name" name="name" autocomplete="name" maxlength="40" required placeholder="e.g. Shibu">' +
+            '<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+            '<button class="btn" type="submit">I’m getting it</button><button class="btn btn-ghost" type="button" data-cancel>Cancel</button></div>' +
+            '<p class="claim-msg" role="status" aria-live="polite"></p></form></div></li>';
+          return '<li>' + BOX + '<div><div class="dish-name">' + name + '</div><button class="claim-btn" type="button" data-id="' + it.id + '">Tap if you’re getting this</button></div></li>';
+        }).join("") + '</ul>';
+        return '<article class="card wish-card"><div class="when">' + esc(p.note || "") + (mine ? ' · your list' : '') + '</div><h2 class="what">' + esc(p.name) + '</h2>' +
+          (mine && items.length ? '<p class="wish-empty">Gifts people claim from your list stay hidden from you. No peeking.</p>' : '') + body + '</article>';
+      }).join("");
+      var inp = document.getElementById("gift-name"); if (inp) inp.focus();
+    }
+    function loadWish() {
+      fetch(SITE_API + "/wishlists?me=" + encodeURIComponent(meTok()))
+        .then(function (r) { return r.json(); })
+        .then(function (j) { lists = j.lists || {}; myName = j.me || null; loaded = true; renderWish(); })
+        .catch(function () { loaded = true; wl.insertAdjacentHTML("afterbegin", '<p class="wish-empty">Couldn’t load the wishlists right now. Try again in a bit.</p>'); });
+    }
+    wl.addEventListener("click", function (e) {
+      var b = e.target.closest(".claim-btn");
+      if (b) { openItem = +b.getAttribute("data-id"); renderWish(); return; }
+      if (e.target.closest("[data-cancel]")) { openItem = null; renderWish(); }
+    });
+    wl.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var f = e.target, id = +f.getAttribute("data-id"), name = f.elements.name.value.trim(), msg = f.querySelector(".claim-msg"), btn = f.querySelector('button[type="submit"]');
+      if (name.length < 2) { msg.textContent = "Please enter your name."; return; }
+      btn.disabled = true; msg.textContent = "Saving…";
+      fetch(SITE_API + "/wishlist/claim", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId: id, name: name, me: meTok(), website: f.elements.website.value }) })
+        .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
+        .then(function (res) {
+          if (res.status === 200 || res.status === 409) { openItem = null; loadWish(); }
+          else { btn.disabled = false; msg.textContent = res.body.error || "Something went wrong. Please try again."; }
+        })
+        .catch(function () { btn.disabled = false; msg.textContent = "Couldn’t save right now. Please try again."; });
+    });
+    document.addEventListener("thomas-wishlist", loadWish);
+    renderWish(); loadWish();
+  }
+
   // ---- guest helper chat bubble ----
   if (window.SITE_API && window.fetch) {
     var wrap = document.createElement("div");
@@ -149,7 +206,49 @@
         input = wrap.querySelector("#chat-q"), chips = wrap.querySelector(".chat-chips"), history = [];
     var riddle = null, token = null;
     try { var saved = JSON.parse(localStorage.getItem("thomasFamilyToken") || "null"); if (saved && saved.exp > Date.now()) token = saved.token; } catch (e) {}
-    function markFamily() { var s = wrap.querySelector(".chat-who small"); if (s) s.textContent = token ? "the family cat · family unlocked" : "the family cat"; }
+    var me = null, mePerson = null, step = null; // step: {kind:"person"|"setword"|"word", person, pending}
+    try { var sm = JSON.parse(localStorage.getItem("thomasFamilyMe") || "null"); if (sm && sm.exp > Date.now()) { me = sm.me; mePerson = sm.person; } } catch (e) {}
+    function markFamily() { var s = wrap.querySelector(".chat-who small"); if (s) s.textContent = token ? "the family cat · " + (mePerson ? "hi, " + mePerson : "family unlocked") : "the family cat"; }
+    function saveMe(j) {
+      me = j.me; mePerson = j.person;
+      try { localStorage.setItem("thomasFamilyMe", JSON.stringify({ me: me, person: mePerson, exp: Date.now() + (j.days || 90) * 86400000 })); } catch (e) {}
+      markFamily(); document.dispatchEvent(new Event("thomas-wishlist"));
+    }
+    function clearMe() { me = mePerson = null; try { localStorage.removeItem("thomasFamilyMe"); } catch (e) {} markFamily(); document.dispatchEvent(new Event("thomas-wishlist")); }
+    function setSecret(on) { input.type = on ? "password" : "text"; input.placeholder = on ? "Your secret word…" : "Ask Rocky about dinner, dishes, dates…"; }
+    function handleStep(q) {
+      var st = step; step = null; setSecret(false);
+      if (/^(cancel|never ?mind|stop)$/i.test(q)) { add("bot", "Fine. Back to my nap."); return; }
+      if (st.kind === "person") {
+        var w = add("bot typing", "Sniffing around…");
+        post("/me/start", { token: token, person: q.replace(/^(i'?m|i am|it'?s|this is)\s+/i, "").replace(/[.!]+$/, "") }).then(function (res) {
+          w.className = "msg bot";
+          if (res.status !== 200) { w.textContent = res.body.error || "Hmm, that didn't work."; return; }
+          if (res.body.needsSetup) {
+            w.textContent = "First time, " + res.body.person + "! Pick a secret word only you know. You'll use it to change your list, so don't tell your siblings.";
+            step = { kind: "setword", person: res.body.person, pending: st.pending };
+          } else {
+            w.textContent = "Prove it. What's " + res.body.person + "'s secret word?";
+            step = { kind: "word", person: res.body.person, pending: st.pending };
+          }
+          setSecret(true);
+        }).catch(function () { w.className = "msg bot"; w.textContent = "Rocky can't hear you right now. Try again later."; });
+        return;
+      }
+      var w2 = add("bot typing", st.kind === "setword" ? "Hiding it under the couch…" : "Checking with my whiskers…");
+      post(st.kind === "setword" ? "/me/set" : "/me/login", { token: token, person: st.person, word: q }).then(function (res) {
+        w2.className = "msg bot";
+        if (res.body.ok) {
+          saveMe(res.body);
+          w2.textContent = st.kind === "setword" ? "Got it, " + res.body.person + ". Your secret word is set. Don't forget it." : "Purrr. Hi, " + res.body.person + ".";
+          if (st.pending) ask(st.pending, true);
+        } else if (res.status === 429 || res.status === 409 || res.status === 400) {
+          w2.textContent = res.body.error || "That didn't work.";
+        } else {
+          w2.textContent = "That's not " + st.person + "'s word. Nice try.";
+        }
+      }).catch(function () { w2.className = "msg bot"; w2.textContent = "Rocky can't hear you right now. Try again later."; });
+    }
     function post(path, body) {
       return fetch(SITE_API + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) })
         .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); });
@@ -174,7 +273,7 @@
           token = res.body.token;
           try { localStorage.setItem("thomasFamilyToken", JSON.stringify({ token: token, exp: Date.now() + (res.body.days || 30) * 86400000 })); } catch (e) {}
           markFamily();
-          w.textContent = "Purrrr. Welcome home, family. Now you can ask me for the address, what\u2019s on the family calendar, or to add something to it.";
+          w.textContent = "Purrrr. Welcome home, family. Now you can ask me for the address, what\u2019s on the family calendar, to add something to it, or to add things to your wishlist.";
         } else if (res.status === 429) {
           w.textContent = res.body.error;
         } else {
@@ -211,24 +310,36 @@
       b.addEventListener("click", function () { input.value = q; form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true })); });
       chips.appendChild(b);
     });
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var q = input.value.trim(); if (!q) return;
-      input.value = ""; chips.hidden = true; add("me", q);
-      if (riddle) { answerRiddle(q); return; }
-      if (/^(i'?m|i am) (family|fam)\b|family (access|riddle)|unlock/i.test(q.replace(/[’]/g, "'"))) { startRiddle(); return; }
+    function ask(q, again) {
       var wait = add("bot typing", "Rocky is thinking… (or napping)");
       var btn = form.querySelector("button"); btn.disabled = true;
-      fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history, token: token }) })
+      fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history, token: token, me: me }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
           var a = j.answer || j.error || "Sorry, something went wrong.";
           wait.className = "msg bot"; wait.textContent = a;
           if (j.proposal) offerAdd(j.proposal);
+          if (j.need === "person" && !again) { if (me) clearMe(); step = { kind: "person", pending: j.pending || q }; input.placeholder = "Your name…"; }
+          if (j.wishlistChanged) document.dispatchEvent(new Event("thomas-wishlist"));
           if (j.answer) { history.push({ role: "user", content: q }, { role: "assistant", content: a }); history = history.slice(-6); }
         })
         .catch(function () { wait.className = "msg bot"; wait.textContent = "Rocky can’t hear you right now. Please try again, or text Shajan or Abby."; })
         .then(function () { btn.disabled = false; input.focus(); });
+    }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = input.value.trim(); if (!q) return;
+      input.value = ""; chips.hidden = true;
+      if (step) { add("me", step.kind === "person" ? q : "••••••"); handleStep(q); return; }
+      add("me", q);
+      if (riddle) { answerRiddle(q); return; }
+      if (/^(i'?m|i am) (family|fam)\b|family (access|riddle)|unlock/i.test(q.replace(/[’]/g, "'"))) { startRiddle(); return; }
+      if (/^(switch (person|user)|log ?out|sign ?out|i'?m not \w+)\W*$/i.test(q.replace(/[’]/g, "'"))) {
+        if (mePerson) { var was = mePerson; clearMe(); add("bot", "Okay, I forgot you're " + was + ". Ask me about a wishlist and I'll ask who you are."); }
+        else add("bot", "You weren't signed in as anyone. Mrrow.");
+        return;
+      }
+      ask(q);
     });
   }
 })();

@@ -172,3 +172,10 @@ a.card:hover{border-color:var(--blue);color:var(--ink)}
 
 .chat-actions{display:flex;gap:8px;align-self:flex-start}
 .chat-actions .btn{min-height:40px;padding:0 16px;font-size:14px}
+
+/* wishlists */
+.wish-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}
+.wish-card .what{margin-bottom:10px}
+.wish-items{margin-top:4px}
+.wish-items .dish-name a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.wish-empty{color:var(--muted);font-size:15px;margin:6px 0 0}
