@@ -147,6 +147,42 @@
     var toggle = wrap.querySelector(".chat-toggle"), panel = wrap.querySelector(".chat-panel"),
         log = wrap.querySelector(".chat-log"), form = wrap.querySelector(".chat-form"),
         input = wrap.querySelector("#chat-q"), chips = wrap.querySelector(".chat-chips"), history = [];
+    var riddle = null, token = null;
+    try { var saved = JSON.parse(localStorage.getItem("thomasFamilyToken") || "null"); if (saved && saved.exp > Date.now()) token = saved.token; } catch (e) {}
+    function markFamily() { var s = wrap.querySelector(".chat-who small"); if (s) s.textContent = token ? "the family cat · family unlocked" : "the family cat"; }
+    function post(path, body) {
+      return fetch(SITE_API + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) })
+        .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); });
+    }
+    function startRiddle() {
+      if (token) { add("bot", "Mrrow, I already know you. You're family. Ask away."); return; }
+      var w = add("bot typing", "Hmm, prove it…");
+      post("/unlock/start").then(function (res) {
+        w.className = "msg bot";
+        if (res.status !== 200) { w.textContent = res.body.error || "I can't do riddles right now."; return; }
+        riddle = res.body.riddleId;
+        w.textContent = "Prove you're family. " + res.body.riddle;
+        input.placeholder = "Your answer…";
+      }).catch(function () { w.className = "msg bot"; w.textContent = "Rocky can't hear you right now. Try again later."; });
+    }
+    function answerRiddle(a) {
+      var w = add("bot typing", "Checking with my whiskers…");
+      var id = riddle; riddle = null; input.placeholder = "Ask Rocky about dinner, dishes, dates…";
+      return post("/unlock/answer", { riddleId: id, answer: a }).then(function (res) {
+        w.className = "msg bot";
+        if (res.body.ok) {
+          token = res.body.token;
+          try { localStorage.setItem("thomasFamilyToken", JSON.stringify({ token: token, exp: Date.now() + (res.body.days || 30) * 86400000 })); } catch (e) {}
+          markFamily();
+          w.textContent = "Purrrr. Welcome home, family. Now you can ask me about the address and the family calendar.";
+        } else if (res.status === 429) {
+          w.textContent = res.body.error;
+        } else {
+          w.textContent = "Nice try. That's not it. Say \"I'm family\" for another riddle.";
+        }
+      }).catch(function () { w.className = "msg bot"; w.textContent = "Rocky can't hear you right now. Try again later."; });
+    }
+    markFamily();
     function add(role, text) {
       var p = document.createElement("p"); p.className = "msg " + role; p.textContent = text; log.appendChild(p);
       log.scrollTop = log.scrollHeight; return p;
@@ -155,8 +191,9 @@
     toggle.addEventListener("click", function () { setOpen(panel.hidden); });
     wrap.querySelector(".chat-close").addEventListener("click", function () { setOpen(false); toggle.focus(); });
     add("bot", "Mrrow. I’m Rocky. Ask me about Thanksgiving, what’s still open to bring, family dates or the fundraiser. I’ll answer between naps.");
-    ["What time is dinner?", "What can I still bring?", "What’s on the menu?"].forEach(function (q) {
+    ["What time is dinner?", "What can I still bring?", "What’s on the menu?", "I’m family"].forEach(function (q) {
       var b = document.createElement("button"); b.type = "button"; b.textContent = q;
+      if (q === "I’m family") b.className = "fam-chip";
       b.addEventListener("click", function () { input.value = q; form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true })); });
       chips.appendChild(b);
     });
@@ -164,9 +201,11 @@
       e.preventDefault();
       var q = input.value.trim(); if (!q) return;
       input.value = ""; chips.hidden = true; add("me", q);
+      if (riddle) { answerRiddle(q); return; }
+      if (/^(i'?m|i am) (family|fam)\b|family (access|riddle)|unlock/i.test(q.replace(/[’]/g, "'"))) { startRiddle(); return; }
       var wait = add("bot typing", "Rocky is thinking… (or napping)");
       var btn = form.querySelector("button"); btn.disabled = true;
-      fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history }) })
+      fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history, token: token }) })
         .then(function (r) { return r.json(); })
         .then(function (j) {
           var a = j.answer || j.error || "Sorry, something went wrong.";
