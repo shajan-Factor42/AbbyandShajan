@@ -23,7 +23,7 @@ window.THANKSGIVING = {
   bring: [
     { name: "Appetizers", desc: "Something to nibble on before dinner", by: "" },
     { name: "Pappadam", desc: "Crisp, crackly & meant for passing", kerala: true, by: "" },
-    { name: "Chicken Curry & Appam", desc: "Kerala curry with lacy rice hoppers", kerala: true, by: "" },
+    { name: "Appam", desc: "Lacy rice hoppers, soft in the middle", kerala: true, by: "" },
     { name: "Mashed Potatoes", desc: "Buttery & creamy", by: "" },
     { name: "Stuffing / Dressing", desc: "Cornbread, sage or a family recipe", by: "" },
     { name: "Sweet Potatoes", desc: "Casserole, roasted or candied — your call", by: "" },
