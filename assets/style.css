@@ -128,3 +128,14 @@ a.card:hover{border-color:var(--blue);color:var(--ink)}
 .btn-ghost:hover{background:var(--blue-soft);color:var(--blue-dark)}
 .steps{margin:12px 0 0;padding-left:22px;display:grid;gap:12px;color:var(--muted)}
 .steps strong{color:var(--ink)}
+
+/* dish claiming */
+.claim-btn{margin-top:6px;min-height:44px;padding:0 16px;border-radius:999px;border:2px dashed var(--blue);background:var(--blue-soft);color:var(--blue-dark);font:600 14px var(--sans);cursor:pointer}
+.claim-btn:hover{background:#D3E8DB}
+.claim-form{margin-top:10px}
+.claim-form label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.claim-row{display:flex;flex-wrap:wrap;gap:8px}
+.claim-row input{flex:1 1 160px;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:12px;font:16px var(--sans);color:var(--ink);background:#fff}
+.claim-row input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.claim-msg{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}

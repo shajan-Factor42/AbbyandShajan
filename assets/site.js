@@ -1,7 +1,7 @@
 (function () {
   var MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  var CHECK = '<svg class="ico" aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#3355D6"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  var BOX = '<svg class="ico" aria-hidden="true" viewBox="0 0 20 20"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#3355D6" stroke-width="2" stroke-dasharray="4 3"/></svg>';
+  var CHECK = '<svg class="ico" aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#1E6B47"/><path d="M5.5 10.5l3 3 6-6.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var BOX = '<svg class="ico" aria-hidden="true" viewBox="0 0 20 20"><rect x="1.5" y="1.5" width="17" height="17" rx="5" fill="none" stroke="#1E6B47" stroke-width="2" stroke-dasharray="4 3"/></svg>';
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
   function dish(d, mine) {
@@ -13,11 +13,64 @@
 
   var ours = document.getElementById("ours"), bring = document.getElementById("bring");
   if (ours && window.THANKSGIVING) {
+    var claims = {};
+    THANKSGIVING.bring.forEach(function (d) { if (d.by) claims[d.name] = d.by; });
+    var openForm = null;
     ours.innerHTML = THANKSGIVING.ours.map(function (d) { return dish(d, true); }).join("");
-    bring.innerHTML = THANKSGIVING.bring.map(function (d) { return dish(d, false); }).join("");
-    var left = THANKSGIVING.bring.filter(function (d) { return !d.by; }).length;
-    var c = document.getElementById("open-count");
-    if (c) c.textContent = left ? left + " still up for grabs" : "Everything’s claimed — thank you!";
+
+    function renderBring() {
+      bring.innerHTML = THANKSGIVING.bring.map(function (d, i) {
+        var tag = d.kerala ? '<span class="tag">KERALA</span>' : '';
+        var by = claims[d.name];
+        var head = '<div class="dish-name">' + esc(d.name) + tag + '</div><div class="dish-desc">' + esc(d.desc) + '</div>';
+        if (by) return '<li>' + CHECK + '<div>' + head + '<span class="status taken">' + esc(by) + '’s bringing this</span></div></li>';
+        if (openForm === i) {
+          return '<li>' + BOX + '<div style="flex:1">' + head +
+            '<form class="claim-form" data-i="' + i + '"><label for="claim-name">Your name</label>' +
+            '<div class="claim-row"><input id="claim-name" name="name" autocomplete="name" maxlength="40" required placeholder="e.g. Shibu">' +
+            '<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+            '<button class="btn" type="submit">I’ll bring it</button><button class="btn btn-ghost" type="button" data-cancel>Cancel</button></div>' +
+            '<p class="claim-msg" role="status" aria-live="polite"></p></form></div></li>';
+        }
+        return '<li>' + BOX + '<div>' + head + '<button class="claim-btn" type="button" data-i="' + i + '">Up for grabs · tap to claim</button></div></li>';
+      }).join("");
+      var left = THANKSGIVING.bring.filter(function (d) { return !claims[d.name]; }).length;
+      var c = document.getElementById("open-count");
+      if (c) c.textContent = left ? left + " still up for grabs" : "Everything’s claimed. Thank you!";
+      var inp = document.getElementById("claim-name");
+      if (inp) inp.focus();
+    }
+
+    bring.addEventListener("click", function (e) {
+      var b = e.target.closest(".claim-btn");
+      if (b) { openForm = +b.getAttribute("data-i"); renderBring(); return; }
+      if (e.target.closest("[data-cancel]")) { openForm = null; renderBring(); }
+    });
+    bring.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var f = e.target, d = THANKSGIVING.bring[+f.getAttribute("data-i")];
+      var name = f.elements.name.value.trim(), msg = f.querySelector(".claim-msg"), btn = f.querySelector('button[type="submit"]');
+      if (name.length < 2) { msg.textContent = "Please enter your name."; return; }
+      btn.disabled = true; msg.textContent = "Saving…";
+      fetch(SITE_API + "/claim", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: THANKSGIVING_EVENT, dish: d.name, name: name, website: f.elements.website.value }) })
+        .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
+        .then(function (res) {
+          if (res.status === 200) { claims[d.name] = res.body.name || name; openForm = null; renderBring(); }
+          else if (res.status === 409) { if (res.body.by) claims[d.name] = res.body.by; openForm = null; renderBring(); alertMsg(d.name + " was just claimed by " + (res.body.by || "someone else") + "."); }
+          else { btn.disabled = false; msg.textContent = res.body.error || "Something went wrong. Please try again."; }
+        })
+        .catch(function () { btn.disabled = false; msg.textContent = "Couldn’t save right now. Please try again, or text Shajan or Abby."; });
+    });
+    function alertMsg(t) { var c = document.getElementById("open-count"); if (c) c.textContent = t; }
+
+    renderBring();
+    if (window.SITE_API && window.fetch) {
+      fetch(SITE_API + "/claims?event=" + encodeURIComponent(THANKSGIVING_EVENT))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { if (j && j.claims) { for (var k in j.claims) claims[k] = j.claims[k]; if (openForm === null) renderBring(); } })
+        .catch(function () {});
+    }
   }
 
   function nextDate(e, today) {

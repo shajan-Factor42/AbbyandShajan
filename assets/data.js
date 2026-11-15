@@ -4,6 +4,10 @@
 
 // Thanksgiving potluck: put a name in "by" when someone claims a dish.
 // Example:  { name: "Pumpkin Pie", desc: "The classic", by: "Shibu" },
+// Where guests' dish claims are saved (Cloudflare Worker + database).
+window.SITE_API = "https://thomas-family-api.shajan.workers.dev";
+window.THANKSGIVING_EVENT = "thanksgiving-2026";
+
 window.THANKSGIVING = {
   ours: [
     { name: "Herb-Roasted Turkey", desc: "Golden, juicy & the star of the table" },
