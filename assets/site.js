@@ -33,31 +33,46 @@
             '<p class="claim-msg" role="status" aria-live="polite"></p></form></div></li>';
         }
         return '<li>' + BOX + '<div>' + head + '<button class="claim-btn" type="button" data-i="' + i + '">Up for grabs · tap to claim</button></div></li>';
-      }).join("");
+      }).join("") + Object.keys(claims).filter(function (k) { return !THANKSGIVING.bring.some(function (d) { return d.name === k; }); }).map(function (k) {
+        return '<li>' + CHECK + '<div><div class="dish-name">' + esc(k) + '<span class="tag tag-extra">ADDED</span></div><span class="status taken">' + esc(claims[k]) + '’s bringing this</span></div></li>';
+      }).join("") + (openForm === "extra" ?
+        '<li>' + BOX + '<div style="flex:1"><div class="dish-name">Bringing something else?</div>' +
+        '<form class="claim-form" data-extra="1"><label for="extra-dish">What are you bringing?</label>' +
+        '<div class="claim-row"><input id="extra-dish" name="dish" maxlength="60" required placeholder="e.g. Banana pudding"></div>' +
+        '<label for="claim-name" style="margin-top:10px">Your name</label>' +
+        '<div class="claim-row"><input id="claim-name" name="name" autocomplete="name" maxlength="40" required placeholder="e.g. Shibu">' +
+        '<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+        '<button class="btn" type="submit">Add it</button><button class="btn btn-ghost" type="button" data-cancel>Cancel</button></div>' +
+        '<p class="claim-msg" role="status" aria-live="polite"></p></form></div></li>' :
+        '<li>' + BOX + '<div><div class="dish-name">Don’t see your dish?</div><div class="dish-desc">Bring something that’s not on the list</div>' +
+        '<button class="claim-btn" type="button" data-extra="1">+ Add your own dish</button></div></li>');
       var left = THANKSGIVING.bring.filter(function (d) { return !claims[d.name]; }).length;
       var c = document.getElementById("open-count");
       if (c) c.textContent = left ? left + " still up for grabs" : "Everything’s claimed. Thank you!";
-      var inp = document.getElementById("claim-name");
+      var inp = document.getElementById(openForm === "extra" ? "extra-dish" : "claim-name");
       if (inp) inp.focus();
     }
 
     bring.addEventListener("click", function (e) {
       var b = e.target.closest(".claim-btn");
-      if (b) { openForm = +b.getAttribute("data-i"); renderBring(); return; }
+      if (b) { openForm = b.hasAttribute("data-extra") ? "extra" : +b.getAttribute("data-i"); renderBring(); return; }
       if (e.target.closest("[data-cancel]")) { openForm = null; renderBring(); }
     });
     bring.addEventListener("submit", function (e) {
       e.preventDefault();
-      var f = e.target, d = THANKSGIVING.bring[+f.getAttribute("data-i")];
+      var f = e.target, isExtra = f.hasAttribute("data-extra");
+      var d = isExtra ? { name: f.elements.dish.value.trim() } : THANKSGIVING.bring[+f.getAttribute("data-i")];
       var name = f.elements.name.value.trim(), msg = f.querySelector(".claim-msg"), btn = f.querySelector('button[type="submit"]');
+      if (isExtra && d.name.length < 2) { msg.textContent = "Tell us what you’re bringing."; return; }
       if (name.length < 2) { msg.textContent = "Please enter your name."; return; }
       btn.disabled = true; msg.textContent = "Saving…";
       fetch(SITE_API + "/claim", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ event: THANKSGIVING_EVENT, dish: d.name, name: name, website: f.elements.website.value }) })
+        body: JSON.stringify({ event: THANKSGIVING_EVENT, dish: d.name, name: name, extra: isExtra, website: f.elements.website.value }) })
         .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
         .then(function (res) {
-          if (res.status === 200) { claims[d.name] = res.body.name || name; openForm = null; renderBring(); }
-          else if (res.status === 409) { if (res.body.by) claims[d.name] = res.body.by; openForm = null; renderBring(); alertMsg(d.name + " was just claimed by " + (res.body.by || "someone else") + "."); }
+          if (res.status === 200) { claims[res.body.dish || d.name] = res.body.name || name; openForm = null; renderBring(); }
+          else if (res.status === 409 && !isExtra) { if (res.body.by) claims[d.name] = res.body.by; openForm = null; renderBring(); alertMsg(d.name + " was just claimed by " + (res.body.by || "someone else") + "."); }
+          else if (res.status === 409) { btn.disabled = false; msg.textContent = (res.body.error || "Someone’s already bringing that.") + " Try something else?"; }
           else { btn.disabled = false; msg.textContent = res.body.error || "Something went wrong. Please try again."; }
         })
         .catch(function () { btn.disabled = false; msg.textContent = "Couldn’t save right now. Please try again, or text Shajan or Abby."; });

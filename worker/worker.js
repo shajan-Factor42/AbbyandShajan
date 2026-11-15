@@ -6,6 +6,7 @@ const EVENTS = {
     "Sweet Potatoes", "Vegetable Side", "Dinner Rolls", "Pumpkin Pie", "Whipped Cream", "Dessert", "Drinks"
   ]
 };
+const MAX_EXTRAS = 30;
 const ALLOWED_ORIGINS = ["https://abbyandshajan.com", "https://www.abbyandshajan.com"];
 
 function cors(request) {
@@ -28,7 +29,7 @@ function cleanName(s) {
 const KNOWLEDGE = `SITE: The Thomas Family (abbyandshajan.com). Family: Shajan and Abby, kids Emma (a wrestler), Evalyn (plays volleyball), Gabriel (the youngest, a big cookie fan), dog Ash (black shepherd, loves sweaters), cat Rocky. Pages: Home, Thanksgiving, Events, Fundraiser, Wishlist.
 THANKSGIVING 2026 ("Pass the Papadam"): Thursday, November 26, 2026, dinner at 6:00 PM, at Shajan and Abby's home. The whole extended family is invited. Mostly classic Thanksgiving with a few Kerala dishes.
 The hosts are making: Herb-Roasted Turkey (Golden, juicy & the star of the table); Homestyle Gravy (Rich pan gravy from the drippings); Chicken Kondattam (Crispy chicken in a spicy, tangy chili-shallot masala); Grammie's Nut Loaf (A savory, herb-packed vegetarian main); Emma's Mac & Cheese (Baked, bubbly & extra cheesy); Green Bean Casserole (Creamy, with crispy fried onions); Corn Casserole (Sweet, buttery & spoonable); Cranberry Sauce (Sweet, tart & made fresh); Herb Butter (Whipped with fresh herbs, made for warm rolls).
-Dishes guests can bring (claim one on the Thanksgiving page by tapping it and entering your name): Appetizers (Something to nibble on before dinner); Pappadam (Crisp, crackly & meant for passing); Chicken Curry & Appam (Kerala curry with lacy rice hoppers); Mashed Potatoes (Buttery & creamy); Stuffing / Dressing (Cornbread, sage or a family recipe); Sweet Potatoes (Casserole, roasted or candied - your call); Vegetable Side (Salad, roasted veggies or a thoran); Dinner Rolls (Soft & warm (the herb butter's on us)); Pumpkin Pie (The classic); Whipped Cream (For topping the pies); Dessert (Cake, cookies, brownies, payasam - surprise us); Drinks (Cider, soda, chaya or your favorite).
+Dishes guests can bring (claim one on the Thanksgiving page by tapping it and entering your name): Appetizers (Something to nibble on before dinner); Pappadam (Crisp, crackly & meant for passing); Chicken Curry & Appam (Kerala curry with lacy rice hoppers); Mashed Potatoes (Buttery & creamy); Stuffing / Dressing (Cornbread, sage or a family recipe); Sweet Potatoes (Casserole, roasted or candied - your call); Vegetable Side (Salad, roasted veggies or a thoran); Dinner Rolls (Soft & warm (the herb butter's on us)); Pumpkin Pie (The classic); Whipped Cream (For topping the pies); Dessert (Cake, cookies, brownies, payasam - surprise us); Drinks (Cider, soda, chaya or your favorite). Bringing something that isn't listed? Add it at the bottom of the bring list on the Thanksgiving page ("Bringing something else?"); anything in LIVE CLAIMS that isn't on this list is an extra dish a guest added.
 EVENTS: Thanksgiving Dinner on Nov 26, 2026 (6:00 PM - the whole family's invited); Gabriel's Birthday on Oct 8 (every year); Emma's Birthday on Oct 6 (every year); Evalyn's Birthday on Nov 3 (every year); Abby's Birthday on Apr 27 (every year); Abby & Shajan's Anniversary on Jul 1 (every year).
 WISHLIST: The Wishlist page has a gift list for Shajan, Abby, Emma, Evalyn, Gabriel, Ash and Rocky. Visitors tap an item and enter their name to say they're getting it, so nobody buys the same gift twice (the person whose list it is won't see it). Family add or remove items on their own list by asking Rocky, e.g. "add a volleyball to my wishlist".
 FUNDRAISER: Every year the whole family picks one charity close to their hearts and raises money for it by December 31 through a GoFundMe; people can also give directly to the charity. The family has not picked the 2026 charity yet; it will be posted on the Fundraiser page soon.
@@ -424,16 +425,29 @@ export default {
       let body;
       try { body = await request.json(); } catch { return json(request, { error: "Bad request" }, 400); }
       if (body.website) return json(request, { ok: true }); // honeypot field: bots fill it, people don't see it
-      const event = String(body.event || ""), dish = String(body.dish || ""), name = cleanName(body.name);
-      if (!EVENTS[event] || !EVENTS[event].includes(dish)) return json(request, { error: "That dish isn't on the list." }, 400);
+      const event = String(body.event || ""), name = cleanName(body.name);
+      let dish = String(body.dish || "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 60);
+      if (!EVENTS[event]) return json(request, { error: "Unknown event." }, 400);
+      // A guest can also add a dish that isn't on the list ("extra"); listed names always win, matched case-insensitively.
+      const listed = EVENTS[event].find(d => d.toLowerCase() === dish.toLowerCase());
+      let extra = 0;
+      if (listed) dish = listed;
+      else if (body.extra) {
+        if (dish.length < 2) return json(request, { error: "Tell us what you're bringing." }, 400);
+        const dup = await env.DB.prepare("SELECT name FROM claims WHERE event = ? AND lower(dish) = lower(?)").bind(event, dish).first();
+        if (dup) return json(request, { error: dup.name + " is already bringing that.", by: dup.name, dish }, 409);
+        const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM claims WHERE event = ? AND extra = 1").bind(event).first();
+        if (n && n.n >= MAX_EXTRAS) return json(request, { error: "The table's full of extras. Text Shajan or Abby to add one more." }, 429);
+        extra = 1;
+      } else return json(request, { error: "That dish isn't on the list." }, 400);
       if (name.length < 2) return json(request, { error: "Please enter your name." }, 400);
-      const res = await env.DB.prepare("INSERT INTO claims (event, dish, name) VALUES (?, ?, ?) ON CONFLICT(event, dish) DO NOTHING")
-        .bind(event, dish, name).run();
+      const res = await env.DB.prepare("INSERT INTO claims (event, dish, name, extra) VALUES (?, ?, ?, ?) ON CONFLICT(event, dish) DO NOTHING")
+        .bind(event, dish, name, extra).run();
       if (!res.meta.changes) {
         const row = await env.DB.prepare("SELECT name FROM claims WHERE event = ? AND dish = ?").bind(event, dish).first();
         return json(request, { error: "Someone just claimed that one.", by: row && row.name }, 409);
       }
-      return json(request, { ok: true, dish, name });
+      return json(request, { ok: true, dish, name, extra: !!extra });
     }
 
     if (url.pathname === "/ask" && request.method === "POST") return ask(request, env);

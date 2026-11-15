@@ -179,3 +179,4 @@ a.card:hover{border-color:var(--blue);color:var(--ink)}
 .wish-items{margin-top:4px}
 .wish-items .dish-name a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
 .wish-empty{color:var(--muted);font-size:15px;margin:6px 0 0}
+.tag-extra{background:var(--gold);color:#141414}
