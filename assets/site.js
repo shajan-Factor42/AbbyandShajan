@@ -126,4 +126,55 @@
         '<div><div class="t">' + esc(p.charity) + '</div>' + (p.raised ? '<div class="s">Raised $' + Number(p.raised).toLocaleString("en-US") + '</div>' : '') + '</div></li>';
     }).join("");
   }
+
+  // ---- guest helper chat bubble ----
+  if (window.SITE_API && window.fetch) {
+    var wrap = document.createElement("div");
+    wrap.className = "chat";
+    wrap.innerHTML =
+      '<button class="chat-toggle" type="button" aria-expanded="false" aria-controls="chat-panel">' +
+      '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>' +
+      '<span>Ask the Thomases</span></button>' +
+      '<section class="chat-panel" id="chat-panel" hidden aria-label="Family site helper">' +
+      '<header><strong>Family helper</strong><button class="chat-close" type="button" aria-label="Close helper">&times;</button></header>' +
+      '<div class="chat-log" aria-live="polite"></div>' +
+      '<div class="chat-chips"></div>' +
+      '<form class="chat-form"><label class="sr" for="chat-q">Your question</label>' +
+      '<input id="chat-q" maxlength="300" autocomplete="off" placeholder="Ask about dinner, dishes, dates…">' +
+      '<button class="btn" type="submit">Ask</button></form>' +
+      '<p class="chat-note">Answers come from this site. For anything else, text Shajan or Abby.</p></section>';
+    document.body.appendChild(wrap);
+    var toggle = wrap.querySelector(".chat-toggle"), panel = wrap.querySelector(".chat-panel"),
+        log = wrap.querySelector(".chat-log"), form = wrap.querySelector(".chat-form"),
+        input = wrap.querySelector("#chat-q"), chips = wrap.querySelector(".chat-chips"), history = [];
+    function add(role, text) {
+      var p = document.createElement("p"); p.className = "msg " + role; p.textContent = text; log.appendChild(p);
+      log.scrollTop = log.scrollHeight; return p;
+    }
+    function setOpen(o) { panel.hidden = !o; toggle.setAttribute("aria-expanded", o ? "true" : "false"); if (o) input.focus(); }
+    toggle.addEventListener("click", function () { setOpen(panel.hidden); });
+    wrap.querySelector(".chat-close").addEventListener("click", function () { setOpen(false); toggle.focus(); });
+    add("bot", "Hi! I can answer questions about Thanksgiving, what’s still open to bring, family dates and our fundraiser.");
+    ["What time is dinner?", "What can I still bring?", "What’s on the menu?"].forEach(function (q) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = q;
+      b.addEventListener("click", function () { input.value = q; form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true })); });
+      chips.appendChild(b);
+    });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = input.value.trim(); if (!q) return;
+      input.value = ""; chips.hidden = true; add("me", q);
+      var wait = add("bot typing", "Thinking…");
+      var btn = form.querySelector("button"); btn.disabled = true;
+      fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var a = j.answer || j.error || "Sorry, something went wrong.";
+          wait.className = "msg bot"; wait.textContent = a;
+          if (j.answer) { history.push({ role: "user", content: q }, { role: "assistant", content: a }); history = history.slice(-6); }
+        })
+        .catch(function () { wait.className = "msg bot"; wait.textContent = "I can’t connect right now. Please try again, or text Shajan or Abby."; })
+        .then(function () { btn.disabled = false; input.focus(); });
+    });
+  }
 })();
