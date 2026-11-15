@@ -133,16 +133,16 @@
     wrap.className = "chat";
     wrap.innerHTML =
       '<button class="chat-toggle" type="button" aria-expanded="false" aria-controls="chat-panel">' +
-      '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>' +
-      '<span>Ask the Thomases</span></button>' +
-      '<section class="chat-panel" id="chat-panel" hidden aria-label="Family site helper">' +
-      '<header><strong>Family helper</strong><button class="chat-close" type="button" aria-label="Close helper">&times;</button></header>' +
+      '<svg class="rocky" aria-hidden="true" viewBox="-24 -30 48 50" width="30" height="31"><path d="M-17,-8 L-13,-28 L-2,-15 Z M17,-8 L13,-28 L2,-15 Z" fill="#7C7C80"/><path d="M-13,-12 L-12,-22 L-6,-15 Z M13,-12 L12,-22 L6,-15 Z" fill="#E9A0A8"/><circle r="18" fill="#8A8A8F"/><path d="M-9,1 q3.5,-4.5 7,0 M2,1 q3.5,-4.5 7,0" fill="none" stroke="#1d1d1d" stroke-width="2.2" stroke-linecap="round"/><path d="M-2.5,5 L2.5,5 L0,7.5 Z" fill="#E9A0A8"/><path d="M-8,7 L-20,5 M8,7 L20,5" stroke="#4a4a4a" stroke-width="1"/><rect x="-13" y="14" width="26" height="5" rx="2.5" fill="#141414"/><path d="M-8,18 l2,5 2,-5 Z M-1,18 l1,5 1,-5 Z M6,18 l2,5 2,-5 Z" fill="#C9CDD2"/></svg>' +
+      '<span>Ask Rocky</span></button>' +
+      '<section class="chat-panel" id="chat-panel" hidden aria-label="Ask Rocky, the family cat">' +
+      '<header><span class="chat-who"><svg class="rocky" aria-hidden="true" viewBox="-24 -30 48 50" width="30" height="31"><path d="M-17,-8 L-13,-28 L-2,-15 Z M17,-8 L13,-28 L2,-15 Z" fill="#7C7C80"/><path d="M-13,-12 L-12,-22 L-6,-15 Z M13,-12 L12,-22 L6,-15 Z" fill="#E9A0A8"/><circle r="18" fill="#8A8A8F"/><path d="M-9,1 q3.5,-4.5 7,0 M2,1 q3.5,-4.5 7,0" fill="none" stroke="#1d1d1d" stroke-width="2.2" stroke-linecap="round"/><path d="M-2.5,5 L2.5,5 L0,7.5 Z" fill="#E9A0A8"/><path d="M-8,7 L-20,5 M8,7 L20,5" stroke="#4a4a4a" stroke-width="1"/><rect x="-13" y="14" width="26" height="5" rx="2.5" fill="#141414"/><path d="M-8,18 l2,5 2,-5 Z M-1,18 l1,5 1,-5 Z M6,18 l2,5 2,-5 Z" fill="#C9CDD2"/></svg><span><strong>Rocky</strong><small>the family cat</small></span></span><button class="chat-close" type="button" aria-label="Close chat with Rocky">&times;</button></header>' +
       '<div class="chat-log" aria-live="polite"></div>' +
       '<div class="chat-chips"></div>' +
       '<form class="chat-form"><label class="sr" for="chat-q">Your question</label>' +
-      '<input id="chat-q" maxlength="300" autocomplete="off" placeholder="Ask about dinner, dishes, dates…">' +
+      '<input id="chat-q" maxlength="300" autocomplete="off" placeholder="Ask Rocky about dinner, dishes, dates…">' +
       '<button class="btn" type="submit">Ask</button></form>' +
-      '<p class="chat-note">Answers come from this site. For anything else, text Shajan or Abby.</p></section>';
+      '<p class="chat-note">Rocky only knows what’s on this site. For anything else, text Shajan or Abby.</p></section>';
     document.body.appendChild(wrap);
     var toggle = wrap.querySelector(".chat-toggle"), panel = wrap.querySelector(".chat-panel"),
         log = wrap.querySelector(".chat-log"), form = wrap.querySelector(".chat-form"),
@@ -154,7 +154,7 @@
     function setOpen(o) { panel.hidden = !o; toggle.setAttribute("aria-expanded", o ? "true" : "false"); if (o) input.focus(); }
     toggle.addEventListener("click", function () { setOpen(panel.hidden); });
     wrap.querySelector(".chat-close").addEventListener("click", function () { setOpen(false); toggle.focus(); });
-    add("bot", "Hi! I can answer questions about Thanksgiving, what’s still open to bring, family dates and our fundraiser.");
+    add("bot", "Mrrow. I’m Rocky. Ask me about Thanksgiving, what’s still open to bring, family dates or the fundraiser. I’ll answer between naps.");
     ["What time is dinner?", "What can I still bring?", "What’s on the menu?"].forEach(function (q) {
       var b = document.createElement("button"); b.type = "button"; b.textContent = q;
       b.addEventListener("click", function () { input.value = q; form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true })); });
@@ -164,7 +164,7 @@
       e.preventDefault();
       var q = input.value.trim(); if (!q) return;
       input.value = ""; chips.hidden = true; add("me", q);
-      var wait = add("bot typing", "Thinking…");
+      var wait = add("bot typing", "Rocky is thinking… (or napping)");
       var btn = form.querySelector("button"); btn.disabled = true;
       fetch(SITE_API + "/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, history: history }) })
         .then(function (r) { return r.json(); })
@@ -173,7 +173,7 @@
           wait.className = "msg bot"; wait.textContent = a;
           if (j.answer) { history.push({ role: "user", content: q }, { role: "assistant", content: a }); history = history.slice(-6); }
         })
-        .catch(function () { wait.className = "msg bot"; wait.textContent = "I can’t connect right now. Please try again, or text Shajan or Abby."; })
+        .catch(function () { wait.className = "msg bot"; wait.textContent = "Rocky can’t hear you right now. Please try again, or text Shajan or Abby."; })
         .then(function () { btn.disabled = false; input.focus(); });
     });
   }
