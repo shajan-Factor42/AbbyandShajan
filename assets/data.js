@@ -10,15 +10,15 @@ window.THANKSGIVING_EVENT = "thanksgiving-2026";
 
 window.THANKSGIVING = {
   ours: [
-    { name: "The Main Squawk", desc: "Herb-roasted turkey, golden, juicy & the star of the table" },
-    { name: "Liquid Gold Gravy", desc: "Rich homestyle gravy from the pan drippings" },
-    { name: "Kondattam Crunch", desc: "Chicken kondattam: crispy chicken in a spicy, tangy chili-shallot masala", kerala: true },
-    { name: "Grammie’s Famous Nut Loaf", desc: "A savory, herb-packed vegetarian main" },
-    { name: "Emma’s Takedown Mac & Cheese", desc: "Baked mac & cheese, bubbly & extra cheesy" },
-    { name: "Crunch-Top Green Beans", desc: "Creamy green bean casserole with crispy fried onions" },
-    { name: "Buttered-Up Corn Casserole", desc: "Sweet, buttery & spoonable" },
-    { name: "Cranberry Crush", desc: "Cranberry sauce, sweet, tart & made fresh" },
-    { name: "Green Thumb Herb Butter", desc: "Butter whipped with fresh herbs, made for warm rolls" }
+    { name: "Herb-Roasted Turkey", desc: "Golden, juicy & the star of the table" },
+    { name: "Homestyle Gravy", desc: "Rich pan gravy from the drippings" },
+    { name: "Chicken Kondattam", desc: "Crispy chicken in a spicy, tangy chili-shallot masala", kerala: true },
+    { name: "Grammie’s Nut Loaf", desc: "A savory, herb-packed vegetarian main" },
+    { name: "Emma’s Mac & Cheese", desc: "Baked, bubbly & extra cheesy" },
+    { name: "Green Bean Casserole", desc: "Creamy, with crispy fried onions" },
+    { name: "Corn Casserole", desc: "Sweet, buttery & spoonable" },
+    { name: "Cranberry Sauce", desc: "Sweet, tart & made fresh" },
+    { name: "Herb Butter", desc: "Whipped with fresh herbs, made for warm rolls" }
   ],
   bring: [
     { name: "Appetizers", desc: "Something to nibble on before dinner", by: "" },
@@ -28,7 +28,7 @@ window.THANKSGIVING = {
     { name: "Stuffing / Dressing", desc: "Cornbread, sage or a family recipe", by: "" },
     { name: "Sweet Potatoes", desc: "Casserole, roasted or candied — your call", by: "" },
     { name: "Vegetable Side", desc: "Salad, roasted veggies or a thoran", by: "" },
-    { name: "Dinner Rolls", desc: "Soft & warm (the Green Thumb Herb Butter’s on us)", by: "" },
+    { name: "Dinner Rolls", desc: "Soft & warm (the herb butter’s on us)", by: "" },
     { name: "Pumpkin Pie", desc: "The classic", by: "" },
     { name: "Whipped Cream", desc: "For topping the pies", by: "" },
     { name: "Dessert", desc: "Cake, cookies, brownies, payasam — surprise us", by: "" },
