@@ -20,6 +20,11 @@
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
 .bar label{display:inline-flex;gap:8px;align-items:center;font-size:15px;color:var(--muted);cursor:pointer}
 .bar input{width:20px;height:20px;accent-color:var(--blue)}
+.grp{display:inline-flex;align-items:center;gap:4px;font-size:14px;color:var(--muted)}
+.grp span{margin-right:4px}
+.grp button{min-height:36px;padding:0 12px;border:1px solid var(--line);background:var(--card);border-radius:99px;font:600 14px var(--sans);color:var(--muted);cursor:pointer}
+.grp button[aria-pressed="true"]{background:var(--blue-soft);border-color:var(--blue);color:var(--blue-dark)}
+.bar .left{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 .progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 22px}
 .progress span{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .3s}
 .group{margin:0 0 22px}
@@ -83,7 +88,8 @@ button.btn-ghost{border:2px solid var(--blue)}
 </div>
 <div class="progress" aria-hidden="true"><span></span></div>
 <div class="bar">
-<label><input type="checkbox" id="hide-done"> Hide what's done</label>
+<div class="left"><div class="grp" id="grp" role="group" aria-label="Group shopping list by"><span>Group by</span><button type="button" data-g="section">Aisle</button><button type="button" data-g="recipe">Recipe</button></div>
+<label><input type="checkbox" id="hide-done"> Hide what's done</label></div>
 <button class="add" id="add-btn" type="button">+ Add item</button>
 </div>
 <div id="list"></div>
@@ -109,6 +115,19 @@ button.btn-ghost{border:2px solid var(--blue)}
 (function () {
   var API = "https://thomas-family-api.shajan.workers.dev";
   var SECTIONS = ["Meat", "Produce", "Dairy", "Frozen", "Pantry", "Indian grocery", "Supplies", "Other"];
+  var RECIPES = [["Turkey", /turkey/i], ["Gravy", /gravy/i], ["Chicken Kondattam", /kondattam/i], ["Grammie's Nut Loaf", /nut loaf/i],
+    ["Emma's Mac & Cheese", /mac\b|mac &|macaroni/i], ["Green Bean Casserole", /green bean/i], ["Corn Casserole", /corn/i],
+    ["Cranberry Sauce", /cranberr/i], ["Herb Butter", /herb butter/i]];
+  var OTHER = "Supplies & other";
+  function recipesOf(i) {
+    var out = [];
+    String(i.dish || "").split(/,|\band\b/).forEach(function (part) {
+      var hit = RECIPES.filter(function (r) { return r[1].test(part); })[0];
+      var name = hit ? hit[0] : (part.trim() ? OTHER : null);
+      if (name && out.indexOf(name) < 0) out.push(name);
+    });
+    return out.length ? out : [OTHER];
+  }
   var FIELDS = {
     shop: [["title", "Item", "text"], ["qty", "How much", "text"], ["dish", "For", "text"], ["section", "Section", "section"],
            ["day", "Buy by", "date"], ["owner", "Who's getting it", "text"], ["notes", "Notes", "textarea"]],
@@ -124,7 +143,8 @@ button.btn-ghost{border:2px solid var(--blue)}
   var items = [], list = "shop", editing = null, busy = 0;
   try { list = localStorage.getItem("prepTab") || "shop"; } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
-  var hideDone = $("hide-done");
+  var hideDone = $("hide-done"), groupBy = "section";
+  try { groupBy = localStorage.getItem("prepGroup") || "section"; } catch (e) {}
   try { hideDone.checked = localStorage.getItem("prepHide") === "1"; } catch (e) {}
 
   function todayIso() { return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" }); }
@@ -178,7 +198,15 @@ button.btn-ghost{border:2px solid var(--blue)}
     var today = todayIso();
     var mine = items.filter(function (i) { return i.list === list && !(hideDone.checked && i.done); });
     var groups = [];
-    if (list === "shop") {
+    $("grp").hidden = list !== "shop";
+    Array.prototype.forEach.call(document.querySelectorAll("#grp button"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.g === groupBy)); });
+    if (list === "shop" && groupBy === "recipe") {
+      RECIPES.map(function (r) { return r[0]; }).concat([OTHER]).forEach(function (name) {
+        var g = mine.filter(function (i) { return recipesOf(i).indexOf(name) >= 0; });
+        g.sort(function (a, b) { return (a.day || "9").localeCompare(b.day || "9") || a.sort - b.sort || a.id - b.id; });
+        if (g.length) groups.push({ title: name, recipe: name, items: g });
+      });
+    } else if (list === "shop") {
       var secs = SECTIONS.slice();
       mine.forEach(function (i) { if (i.section && secs.indexOf(i.section) < 0) secs.splice(secs.length - 1, 0, i.section); });
       secs.forEach(function (s) {
@@ -205,12 +233,12 @@ button.btn-ghost{border:2px solid var(--blue)}
       if (g.today) h.appendChild(el("span", "today", "Today"));
       sec.appendChild(h);
       var ul = el("ul", "items");
-      g.items.forEach(function (i) { ul.appendChild(row(i, today)); });
+      g.items.forEach(function (i) { ul.appendChild(row(i, today, g.recipe)); });
       sec.appendChild(ul); box.appendChild(sec);
     });
   }
 
-  function row(i, today) {
+  function row(i, today, recipe) {
     var li = el("li", i.done ? "done" : "");
     var cb = el("input"); cb.type = "checkbox"; cb.checked = !!i.done;
     cb.setAttribute("aria-label", "Done: " + i.title);
@@ -223,7 +251,11 @@ button.btn-ghost{border:2px solid var(--blue)}
     if (i.owner) t.appendChild(el("span", "who", i.owner));
     body.appendChild(t);
     var meta = [];
-    if (i.dish) meta.push((list === "shop" ? "For " : "") + i.dish);
+    if (recipe) {
+      if (i.section) meta.push(i.section);
+      var others = recipesOf(i).filter(function (r) { return r !== recipe && r !== OTHER; });
+      if (others.length) meta.push((meta.length ? " · " : "") + "Also for " + others.join(", "));
+    } else if (i.dish) meta.push((list === "shop" ? "For " : "") + i.dish);
     var mline = el("div", "m", meta.join(""));
     if (list === "shop" && i.day) {
       if (meta.length) mline.appendChild(document.createTextNode(" · "));
@@ -309,6 +341,9 @@ button.btn-ghost{border:2px solid var(--blue)}
   });
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) {
     b.addEventListener("click", function () { list = b.dataset.list; try { localStorage.setItem("prepTab", list); } catch (e) {} render(); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#grp button"), function (b) {
+    b.addEventListener("click", function () { groupBy = b.dataset.g; try { localStorage.setItem("prepGroup", groupBy); } catch (e) {} render(); });
   });
   hideDone.addEventListener("change", function () { try { localStorage.setItem("prepHide", hideDone.checked ? "1" : "0"); } catch (e) {} render(); });
 
