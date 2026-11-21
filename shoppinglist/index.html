@@ -45,6 +45,10 @@
 .items .late{color:#B03A2E;font-weight:600}
 .items li.done .t,.items li.done .tm{text-decoration:line-through;color:var(--muted)}
 .items li.done{background:#FBFAF7}
+.items li.got{background:#E3F4E4;box-shadow:inset 5px 0 0 #2E8B57}
+.items li.got .t{color:#0F4A30}
+.items li.got .m{color:#2F5E44}
+.items .gottag{display:inline-block;font:700 12px var(--sans);color:#fff;background:#2E8B57;border-radius:99px;padding:2px 9px;margin-left:6px;vertical-align:1px}
 .items .havetag{flex:none;font:700 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--blue-dark);background:var(--blue-soft);border-radius:8px;padding:5px 7px;margin-top:2px}
 .items li.have .t{color:var(--muted)}
 .linkish{background:none;border:0;padding:0;font:inherit;color:var(--blue);text-decoration:underline;cursor:pointer}
@@ -76,7 +80,7 @@ button.btn-ghost{border:2px solid var(--blue)}
 <div class="hero">
 <div class="eyebrow">Thanksgiving 2026 · Family only</div>
 <h1>Kitchen HQ</h1>
-<p class="lede">Shopping list and cooking schedule. Tap a box to check it off, tap anything else to edit. Changes save for everyone.</p>
+<p class="lede">Shopping list and cooking schedule. Check off what you have, tap anything else to edit. Changes save for everyone.</p>
 </div>
 
 <div id="locked" class="locked panel" hidden>
@@ -98,7 +102,7 @@ button.btn-ghost{border:2px solid var(--blue)}
 <div class="progress" aria-hidden="true"><span></span></div>
 <div class="bar">
 <div class="left"><div class="grp" id="grp" role="group" aria-label="Group shopping list by"><span>Group by</span><button type="button" data-g="section">Aisle</button><button type="button" data-g="recipe">Recipe</button></div>
-<label><input type="checkbox" id="hide-done"> Hide what's done</label></div>
+<label><input type="checkbox" id="hide-done"> <span id="hide-label">Hide what's done</span></label></div>
 <button class="add" id="add-btn" type="button">+ Add item</button>
 </div>
 <div id="list"></div>
@@ -206,6 +210,7 @@ button.btn-ghost{border:2px solid var(--blue)}
       if (l === list) document.querySelector(".progress span").style.width = (all.length ? 100 * done / all.length : 0) + "%";
     });
     $("add-btn").textContent = list === "shop" ? "+ Add item" : "+ Add task";
+    $("hide-label").textContent = list === "shop" ? "Hide what we have" : "Hide what's done";
     var box = $("list"); box.textContent = "";
     var today = todayIso();
     var mine = items.filter(function (i) { return i.list === list && !(hideDone.checked && i.done); });
@@ -265,7 +270,8 @@ button.btn-ghost{border:2px solid var(--blue)}
   }
 
   function row(i, today, recipe) {
-    var li = el("li", i.done ? "done" : "");
+    var got = list === "shop" && i.done;
+    var li = el("li", got ? "got" : (i.done ? "done" : ""));
     if (i.section === HAVE) { li.className = "have"; li.appendChild(el("span", "havetag", "Have it")); }
     var cb = el("input"); cb.type = "checkbox"; cb.checked = !!i.done;
     cb.setAttribute("aria-label", "Done: " + i.title);
@@ -275,6 +281,7 @@ button.btn-ghost{border:2px solid var(--blue)}
     var body = el("button", "body"); body.type = "button";
     var t = el("div", "t", i.title);
     if (i.qty) { t.appendChild(document.createTextNode(" ")); t.appendChild(el("span", "q", "· " + i.qty)); }
+    if (got) t.appendChild(el("span", "gottag", "✓ Have it"));
     if (i.owner) t.appendChild(el("span", "who", i.owner));
     body.appendChild(t);
     var meta = [];
