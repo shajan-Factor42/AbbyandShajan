@@ -407,30 +407,32 @@ async function ask(request, env) {
   }
 }
 
-// ---- Kitchen prep page (prep.html; hidden). Anyone with the private link (PREP_KEY secret) can read and edit. ----
+// ---- Kitchen HQ (/shoppinglist; hidden). Family who solved the riddle, or anyone with the PREP_KEY link, can read and edit. ----
 const PREP_LISTS = ["shop", "sched"];
 const PREP_MAX = 500;
 function prepText(v, max) {
   const s = String(v == null ? "" : v).replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
   return s || null;
 }
-async function prepAuth(request, env, k) {
+async function prepAuth(request, env, k, t) {
+  if (await isFamily(env, t)) return null;
   const ip = "p:" + clientIp(request);
   if (await missesLastHour(env, ip) >= MAX_MISSES_PER_HOUR) return json(request, { error: "Too many tries. Please wait an hour." }, 429);
   if (env.PREP_KEY && typeof k === "string" && k.length >= 16 && k.length <= 100 &&
       await hmac(env.PREP_KEY, "k|" + k) === await hmac(env.PREP_KEY, "k|" + env.PREP_KEY)) return null;
   await env.DB.prepare("INSERT INTO unlock_attempts (ip, ts) VALUES (?, ?)").bind(ip, Date.now()).run();
-  return json(request, { error: "This link isn't valid. Ask Shajan for the kitchen link." }, 403);
+  return json(request, { error: "Family only. Answer the family riddle to get in." }, 403);
 }
 async function prepList(request, env) {
-  const denied = await prepAuth(request, env, new URL(request.url).searchParams.get("k"));
+  const q = new URL(request.url).searchParams;
+  const denied = await prepAuth(request, env, q.get("k"), q.get("t"));
   if (denied) return denied;
   const { results } = await env.DB.prepare("SELECT * FROM prep ORDER BY list, sort, id").all();
   return json(request, { items: results });
 }
 async function prepSave(request, env) {
   let body; try { body = await request.json(); } catch { return json(request, { error: "Bad request" }, 400); }
-  const denied = await prepAuth(request, env, body.k);
+  const denied = await prepAuth(request, env, body.k, body.t);
   if (denied) return denied;
   const it = body.item || {};
   const list = PREP_LISTS.includes(it.list) ? it.list : null;
@@ -456,7 +458,7 @@ async function prepSave(request, env) {
 }
 async function prepDelete(request, env) {
   let body; try { body = await request.json(); } catch { return json(request, { error: "Bad request" }, 400); }
-  const denied = await prepAuth(request, env, body.k);
+  const denied = await prepAuth(request, env, body.k, body.t);
   if (denied) return denied;
   await env.DB.prepare("DELETE FROM prep WHERE id = ?").bind(parseInt(body.id, 10) || 0).run();
   return json(request, { ok: true });
