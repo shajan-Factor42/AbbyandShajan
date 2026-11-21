@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Kitchen HQ · The Thomas Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css?v=20261115b">
+<style>
+.hq .hero{padding:40px 0 18px}
+.hq h1{font-size:clamp(40px,7vw,64px)}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;max-width:420px;margin:0 auto 18px}
+.tabs button{flex:1;min-height:44px;border:0;border-radius:10px;background:transparent;font:600 15px var(--sans);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--blue);color:#fff}
+.tabs .count{font-weight:500;opacity:.8;margin-left:4px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.bar label{display:inline-flex;gap:8px;align-items:center;font-size:15px;color:var(--muted);cursor:pointer}
+.bar input{width:20px;height:20px;accent-color:var(--blue)}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 22px}
+.progress span{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .3s}
+.group{margin:0 0 22px}
+.group h2{font-size:24px;display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.group h2 small{font:500 14px var(--sans);color:var(--muted)}
+.group h2 .today{font:700 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--gold);border-radius:99px;padding:3px 10px}
+.items{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.items li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-top:1px solid var(--line)}
+.items li:first-child{border-top:0}
+.items input[type=checkbox]{flex:none;width:26px;height:26px;margin:1px 0 0;accent-color:var(--blue);cursor:pointer}
+.items .body{flex:1;min-width:0;background:none;border:0;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.items .t{font-weight:600}
+.items .q{font-weight:400;color:var(--muted)}
+.items .m{font-size:14px;color:var(--muted);margin-top:2px}
+.items .n{font-size:14px;color:var(--ink);background:#FFF7EA;border-radius:8px;padding:4px 8px;margin-top:6px;display:inline-block}
+.items .tm{flex:none;min-width:74px;font-weight:700;color:var(--blue-dark);font-variant-numeric:tabular-nums;padding-top:2px}
+.items .who{display:inline-block;font:600 12px var(--sans);color:var(--blue-dark);background:var(--blue-soft);border-radius:99px;padding:2px 9px;margin-left:6px;vertical-align:1px}
+.items .late{color:#B03A2E;font-weight:600}
+.items li.done .t,.items li.done .tm{text-decoration:line-through;color:var(--muted)}
+.items li.done{background:#FBFAF7}
+.add{min-height:44px;padding:0 18px;border-radius:12px;border:2px dashed var(--blue);background:var(--blue-soft);color:var(--blue-dark);font:600 15px var(--sans);cursor:pointer}
+.status{font-size:13px;color:var(--muted);text-align:center;margin:10px 0 30px}
+.locked{max-width:520px;margin:30px auto;text-align:center}
+dialog{border:0;border-radius:20px;padding:0;width:min(520px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,20,20,.45)}
+dialog form{padding:22px}
+dialog h3{font-family:var(--serif);font-weight:400;font-size:26px;margin:0 0 14px}
+.f{display:block;margin:0 0 12px;font-size:14px;font-weight:600;color:var(--muted)}
+.f input,.f select,.f textarea{display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;font:16px var(--sans);color:var(--ink);background:#fff}
+.f textarea{min-height:70px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg-btns{display:flex;gap:10px;justify-content:space-between;margin-top:8px}
+.dlg-btns .right{display:flex;gap:10px}
+.btn-del{background:transparent;color:#B03A2E;border:2px solid #E7B7B1}
+.btn-del:hover{background:#FBEBEB;color:#B03A2E}
+button.btn{border:0;cursor:pointer;font:600 16px var(--sans)}
+button.btn-ghost{border:2px solid var(--blue)}
+</style>
+</head>
+<body class="hq">
+<header class="site-head"><div class="wrap">
+<a class="brand" href="index.html"><span class="mark" aria-hidden="true">T</span>The Thomas Family</a>
+<nav class="nav" aria-label="Main"><a href="thanksgiving.html">Thanksgiving menu</a></nav>
+</div></header>
+<main class="wrap">
+<div class="hero">
+<div class="eyebrow">Thanksgiving 2026 · Family only</div>
+<h1>Kitchen HQ</h1>
+<p class="lede">Shopping list and cooking schedule. Tap a box to check it off, tap anything else to edit. Changes save for everyone.</p>
+</div>
+
+<div id="locked" class="locked panel" hidden>
+<h2>This page needs the kitchen link</h2>
+<p class="note">Open it from the private link Shajan shared. It ends with <b>#k=</b> and a code.</p>
+</div>
+
+<div id="app" hidden>
+<div class="tabs" role="tablist">
+<button role="tab" id="tab-shop" aria-selected="true" data-list="shop">Shopping<span class="count"></span></button>
+<button role="tab" id="tab-sched" aria-selected="false" data-list="sched">Schedule<span class="count"></span></button>
+</div>
+<div class="progress" aria-hidden="true"><span></span></div>
+<div class="bar">
+<label><input type="checkbox" id="hide-done"> Hide what's done</label>
+<button class="add" id="add-btn" type="button">+ Add item</button>
+</div>
+<div id="list"></div>
+<p class="status" id="status" aria-live="polite"></p>
+</div>
+</main>
+
+<dialog id="dlg">
+<form method="dialog" id="dlg-form">
+<h3 id="dlg-title">Edit</h3>
+<div id="dlg-fields"></div>
+<div class="dlg-btns">
+<button type="button" class="btn btn-del" id="dlg-del">Delete</button>
+<div class="right">
+<button type="button" class="btn btn-ghost" id="dlg-cancel">Cancel</button>
+<button type="submit" class="btn" id="dlg-save">Save</button>
+</div>
+</div>
+</form>
+</dialog>
+
+<script>
+(function () {
+  var API = "https://thomas-family-api.shajan.workers.dev";
+  var SECTIONS = ["Meat", "Produce", "Dairy", "Frozen", "Pantry", "Indian grocery", "Supplies", "Other"];
+  var FIELDS = {
+    shop: [["title", "Item", "text"], ["qty", "How much", "text"], ["dish", "For", "text"], ["section", "Section", "section"],
+           ["day", "Buy by", "date"], ["owner", "Who's getting it", "text"], ["notes", "Notes", "textarea"]],
+    sched: [["title", "Task", "text"], ["day", "Day", "date"], ["time", "Time", "text"], ["dish", "Dish", "text"],
+            ["owner", "Who", "text"], ["notes", "Notes", "textarea"]]
+  };
+
+  // The key lives only in the private link (#k=...) and this device; it's never in the site's code.
+  var m = location.hash.match(/k=([A-Za-z0-9_-]{16,100})/);
+  var key = m ? m[1] : "";
+  try { if (key) localStorage.setItem("prepKey", key); else key = localStorage.getItem("prepKey") || ""; } catch (e) {}
+
+  var items = [], list = "shop", editing = null, busy = 0;
+  try { list = localStorage.getItem("prepTab") || "shop"; } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  var hideDone = $("hide-done");
+  try { hideDone.checked = localStorage.getItem("prepHide") === "1"; } catch (e) {}
+
+  function todayIso() { return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" }); }
+  function dayLabel(iso, long) {
+    if (!iso) return long ? "Anytime" : "";
+    var p = iso.split("-"), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2], 12));
+    return d.toLocaleDateString("en-US", long ? { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" } : { weekday: "short", month: "numeric", day: "numeric", timeZone: "UTC" });
+  }
+  function mins(t) {
+    var x = String(t || "").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([ap])?\.?m?\.?$/i);
+    if (!x) return -1;
+    var h = +x[1] % 12; if (x[3] && /p/i.test(x[3])) h += 12; if (!x[3] && +x[1] < 7) h += 12;
+    return h * 60 + (+x[2] || 0);
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function status(msg) { $("status").textContent = msg; }
+
+  function api(path, body) {
+    var opts = body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.assign({ k: key }, body)) } : {};
+    var url = API + path + (body ? "" : "?k=" + encodeURIComponent(key));
+    return fetch(url, opts).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (!r.ok) { var e = new Error(d.error || "Something went wrong."); e.status = r.status; throw e; }
+        return d;
+      });
+    });
+  }
+
+  function load(quiet) {
+    if (busy || $("dlg").open) return Promise.resolve();
+    return api("/prep").then(function (d) {
+      items = d.items || [];
+      $("locked").hidden = true; $("app").hidden = false;
+      render();
+      status("Up to date · " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }));
+    }).catch(function (e) {
+      if (e.status === 403) { $("app").hidden = true; $("locked").hidden = false; }
+      else if (!quiet) status("Couldn't load the list. Check your connection and refresh.");
+    });
+  }
+
+  function render() {
+    ["shop", "sched"].forEach(function (l) {
+      var all = items.filter(function (i) { return i.list === l; }), done = all.filter(function (i) { return i.done; }).length;
+      var b = $("tab-" + l); b.setAttribute("aria-selected", String(l === list));
+      b.querySelector(".count").textContent = done + "/" + all.length;
+      if (l === list) document.querySelector(".progress span").style.width = (all.length ? 100 * done / all.length : 0) + "%";
+    });
+    $("add-btn").textContent = list === "shop" ? "+ Add item" : "+ Add task";
+    var box = $("list"); box.textContent = "";
+    var today = todayIso();
+    var mine = items.filter(function (i) { return i.list === list && !(hideDone.checked && i.done); });
+    var groups = [];
+    if (list === "shop") {
+      var secs = SECTIONS.slice();
+      mine.forEach(function (i) { if (i.section && secs.indexOf(i.section) < 0) secs.splice(secs.length - 1, 0, i.section); });
+      secs.forEach(function (s) {
+        var g = mine.filter(function (i) { return (i.section || "Other") === s || (s === "Other" && secs.indexOf(i.section) < 0); });
+        g.sort(function (a, b) { return (a.day || "9").localeCompare(b.day || "9") || a.sort - b.sort || a.id - b.id; });
+        if (g.length) groups.push({ title: s, items: g });
+      });
+    } else {
+      var days = [];
+      mine.forEach(function (i) { var d = i.day || ""; if (days.indexOf(d) < 0) days.push(d); });
+      days.sort(function (a, b) { return (a || "9").localeCompare(b || "9"); });
+      days.forEach(function (d) {
+        var g = mine.filter(function (i) { return (i.day || "") === d; });
+        g.sort(function (a, b) { return mins(a.time) - mins(b.time) || a.sort - b.sort || a.id - b.id; });
+        groups.push({ title: dayLabel(d, true), today: d === today, items: g });
+      });
+    }
+    if (!groups.length) box.appendChild(el("p", "note", hideDone.checked ? "Everything here is done. Nice work." : "Nothing here yet."));
+    groups.forEach(function (g) {
+      var sec = el("section", "group"); sec.style.padding = "0";
+      var h = el("h2", null, g.title);
+      var left = g.items.filter(function (i) { return !i.done; }).length;
+      h.appendChild(el("small", null, left ? left + " to go" : "all done ✓"));
+      if (g.today) h.appendChild(el("span", "today", "Today"));
+      sec.appendChild(h);
+      var ul = el("ul", "items");
+      g.items.forEach(function (i) { ul.appendChild(row(i, today)); });
+      sec.appendChild(ul); box.appendChild(sec);
+    });
+  }
+
+  function row(i, today) {
+    var li = el("li", i.done ? "done" : "");
+    var cb = el("input"); cb.type = "checkbox"; cb.checked = !!i.done;
+    cb.setAttribute("aria-label", "Done: " + i.title);
+    cb.addEventListener("change", function () { save(Object.assign({}, i, { done: cb.checked ? 1 : 0 })); });
+    li.appendChild(cb);
+    if (list === "sched" && i.time) li.appendChild(el("span", "tm", i.time));
+    var body = el("button", "body"); body.type = "button";
+    var t = el("div", "t", i.title);
+    if (i.qty) { t.appendChild(document.createTextNode(" ")); t.appendChild(el("span", "q", "· " + i.qty)); }
+    if (i.owner) t.appendChild(el("span", "who", i.owner));
+    body.appendChild(t);
+    var meta = [];
+    if (i.dish) meta.push((list === "shop" ? "For " : "") + i.dish);
+    var mline = el("div", "m", meta.join(""));
+    if (list === "shop" && i.day) {
+      if (meta.length) mline.appendChild(document.createTextNode(" · "));
+      var late = !i.done && i.day < today;
+      mline.appendChild(el("span", late ? "late" : "", (late ? "Overdue: buy by " : "Buy by ") + dayLabel(i.day)));
+    }
+    if (list === "sched" && !i.done && i.day && i.day < today) {
+      if (meta.length) mline.appendChild(document.createTextNode(" · "));
+      mline.appendChild(el("span", "late", "Not done yet"));
+    }
+    if (mline.textContent) body.appendChild(mline);
+    if (i.notes) body.appendChild(el("div", "n", i.notes));
+    body.addEventListener("click", function () { openEdit(i); });
+    li.appendChild(body);
+    return li;
+  }
+
+  function save(item) {
+    var idx = items.findIndex(function (x) { return x.id === item.id; });
+    var prev = idx >= 0 ? items[idx] : null;
+    if (prev) { items[idx] = item; render(); }
+    busy++; status("Saving…");
+    return api("/prep/save", { item: item }).then(function (d) {
+      var j = items.findIndex(function (x) { return x.id === d.item.id; });
+      if (j >= 0) items[j] = d.item; else items.push(d.item);
+      render(); status("Saved");
+    }).catch(function (e) {
+      if (prev) { items[idx] = prev; render(); }
+      status(e.message); alert(e.message);
+    }).finally(function () { busy--; });
+  }
+
+  function openEdit(item) {
+    editing = item;
+    var isNew = !item.id;
+    $("dlg-title").textContent = (isNew ? "Add " : "Edit ") + (list === "shop" ? "item" : "task");
+    $("dlg-del").hidden = isNew;
+    var f = $("dlg-fields"); f.textContent = "";
+    var defs = FIELDS[list], grid = null;
+    defs.forEach(function (d, n) {
+      var lab = el("label", "f", d[1]), inp;
+      if (d[2] === "textarea") inp = el("textarea");
+      else if (d[2] === "section") {
+        inp = el("select");
+        SECTIONS.forEach(function (s) { var o = el("option", null, s); o.value = s; inp.appendChild(o); });
+        if (item.section && SECTIONS.indexOf(item.section) < 0) { var o = el("option", null, item.section); o.value = item.section; inp.appendChild(o); }
+      } else { inp = el("input"); inp.type = d[2]; }
+      inp.name = d[0]; if (d[0] === "time") inp.placeholder = "3:30 PM"; inp.value = item[d[0]] || (d[2] === "section" ? "Pantry" : "");
+      if (d[0] === "title") inp.required = true;
+      lab.appendChild(inp);
+      var pair = (list === "shop" && (d[0] === "qty" || d[0] === "section" || d[0] === "day" || d[0] === "dish")) ||
+                 (list === "sched" && (d[0] === "day" || d[0] === "time" || d[0] === "dish" || d[0] === "owner"));
+      if (pair) { if (!grid || grid.children.length === 2) { grid = el("div", "row2"); f.appendChild(grid); } grid.appendChild(lab); }
+      else { grid = null; f.appendChild(lab); }
+    });
+    $("dlg").showModal();
+    if (isNew) f.querySelector("[name=title]").focus();
+  }
+
+  $("dlg-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var data = Object.assign({}, editing);
+    Array.prototype.forEach.call($("dlg-fields").querySelectorAll("[name]"), function (inp) { data[inp.name] = inp.value.trim(); });
+    if (!data.title) return;
+    $("dlg").close();
+    save(data);
+  });
+  $("dlg-cancel").addEventListener("click", function () { $("dlg").close(); });
+  $("dlg-del").addEventListener("click", function () {
+    var it = editing;
+    if (!it || !confirm("Delete “" + it.title + "” for everyone?")) return;
+    $("dlg").close();
+    var before = items.slice();
+    items = items.filter(function (x) { return x.id !== it.id; }); render();
+    busy++; status("Deleting…");
+    api("/prep/delete", { id: it.id }).then(function () { status("Deleted"); })
+      .catch(function (e) { items = before; render(); alert(e.message); })
+      .finally(function () { busy--; });
+  });
+  $("add-btn").addEventListener("click", function () {
+    var maxSort = items.reduce(function (m, i) { return i.list === list ? Math.max(m, i.sort) : m; }, 0);
+    openEdit({ list: list, sort: maxSort + 1, done: 0, day: list === "sched" ? todayIso() : "" });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) {
+    b.addEventListener("click", function () { list = b.dataset.list; try { localStorage.setItem("prepTab", list); } catch (e) {} render(); });
+  });
+  hideDone.addEventListener("change", function () { try { localStorage.setItem("prepHide", hideDone.checked ? "1" : "0"); } catch (e) {} render(); });
+
+  if (!key) { $("locked").hidden = false; return; }
+  status("Loading…");
+  load();
+  setInterval(function () { if (!document.hidden) load(true); }, 20000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) load(true); });
+})();
+</script>
+</body>
+</html>

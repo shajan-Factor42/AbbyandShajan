@@ -407,6 +407,61 @@ async function ask(request, env) {
   }
 }
 
+// ---- Kitchen prep page (prep.html; hidden). Anyone with the private link (PREP_KEY secret) can read and edit. ----
+const PREP_LISTS = ["shop", "sched"];
+const PREP_MAX = 500;
+function prepText(v, max) {
+  const s = String(v == null ? "" : v).replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
+  return s || null;
+}
+async function prepAuth(request, env, k) {
+  const ip = "p:" + clientIp(request);
+  if (await missesLastHour(env, ip) >= MAX_MISSES_PER_HOUR) return json(request, { error: "Too many tries. Please wait an hour." }, 429);
+  if (env.PREP_KEY && typeof k === "string" && k.length >= 16 && k.length <= 100 &&
+      await hmac(env.PREP_KEY, "k|" + k) === await hmac(env.PREP_KEY, "k|" + env.PREP_KEY)) return null;
+  await env.DB.prepare("INSERT INTO unlock_attempts (ip, ts) VALUES (?, ?)").bind(ip, Date.now()).run();
+  return json(request, { error: "This link isn't valid. Ask Shajan for the kitchen link." }, 403);
+}
+async function prepList(request, env) {
+  const denied = await prepAuth(request, env, new URL(request.url).searchParams.get("k"));
+  if (denied) return denied;
+  const { results } = await env.DB.prepare("SELECT * FROM prep ORDER BY list, sort, id").all();
+  return json(request, { items: results });
+}
+async function prepSave(request, env) {
+  let body; try { body = await request.json(); } catch { return json(request, { error: "Bad request" }, 400); }
+  const denied = await prepAuth(request, env, body.k);
+  if (denied) return denied;
+  const it = body.item || {};
+  const list = PREP_LISTS.includes(it.list) ? it.list : null;
+  const title = prepText(it.title, 200);
+  if (!list || !title) return json(request, { error: "Every item needs a name." }, 400);
+  const day = /^\d{4}-\d{2}-\d{2}$/.test(String(it.day || "")) ? it.day : null;
+  const sort = Number.isFinite(Number(it.sort)) ? Number(it.sort) : Date.now() / 1e9;
+  const vals = [list, sort, it.done ? 1 : 0, day, prepText(it.time, 20), title, prepText(it.qty, 60), prepText(it.dish, 120),
+    prepText(it.section, 40), prepText(it.notes, 500), prepText(it.owner, 40), Date.now()];
+  const id = parseInt(it.id, 10);
+  let row;
+  if (id) {
+    row = await env.DB.prepare("UPDATE prep SET list=?, sort=?, done=?, day=?, time=?, title=?, qty=?, dish=?, section=?, notes=?, owner=?, updated_at=? WHERE id=? RETURNING *")
+      .bind(...vals, id).first();
+    if (!row) return json(request, { error: "Someone else deleted that one." }, 404);
+  } else {
+    const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM prep").first();
+    if (n && n.n >= PREP_MAX) return json(request, { error: "The list is full." }, 429);
+    row = await env.DB.prepare("INSERT INTO prep (list, sort, done, day, time, title, qty, dish, section, notes, owner, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *")
+      .bind(...vals).first();
+  }
+  return json(request, { ok: true, item: row });
+}
+async function prepDelete(request, env) {
+  let body; try { body = await request.json(); } catch { return json(request, { error: "Bad request" }, 400); }
+  const denied = await prepAuth(request, env, body.k);
+  if (denied) return denied;
+  await env.DB.prepare("DELETE FROM prep WHERE id = ?").bind(parseInt(body.id, 10) || 0).run();
+  return json(request, { ok: true });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -459,6 +514,9 @@ export default {
     if (url.pathname === "/me/start" && request.method === "POST") return meStart(request, env);
     if (url.pathname === "/me/set" && request.method === "POST") return meSet(request, env);
     if (url.pathname === "/me/login" && request.method === "POST") return meLogin(request, env);
+    if (url.pathname === "/prep" && request.method === "GET") return prepList(request, env);
+    if (url.pathname === "/prep/save" && request.method === "POST") return prepSave(request, env);
+    if (url.pathname === "/prep/delete" && request.method === "POST") return prepDelete(request, env);
 
     return json(request, { error: "Not found" }, 404);
   }
